@@ -43,8 +43,8 @@ export default function Hero() {
             {/* Hero Text */}
             <div className="lg:col-span-6 text-white space-y-6 max-md:mt-28 max-md:px-1 md:mt-24">
               <h1
-                // style={{ fontSize: "5.5rem" }}
-                className="text-7xl font-bold leading-snug playfair-display"
+                style={{ fontSize: "5.5rem" }}
+                className="text-7xl font-bold playfair-display"
               >
                 Sona A Luxury Hotel
               </h1>

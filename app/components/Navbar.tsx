@@ -175,7 +175,7 @@ export default function Header() {
 
         {/* Contact Info */}
         <ul className="px-6 mt-6 space-y-2 text-sm text-[#5A4D48] ">
-          <li className="flex items-center gap-2">
+          <li className="flex items-center gap-2 ">
             <Smartphone /> (12) 345 67890
           </li>
           <li className="flex items-center gap-2">
@@ -190,10 +190,10 @@ export default function Header() {
         <div className="top-nav border-b border-gray-200">
           <div className="container mx-auto px-4 py-3 flex justify-between items-center text-sm text-gray-800">
             <ul className="tn-left flex gap-6">
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-2 font-semibold">
                 <Phone /> (12) 345 67890
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-2 font-semibold">
                 <Mail /> info.colorlib@gmail.com
               </li>
             </ul>
