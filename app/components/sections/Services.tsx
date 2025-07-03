@@ -2,7 +2,7 @@
 
 import React from "react";
 import "@/app/globals.css";
-import { BedDouble, Beer, CarTaxiFront, MapPinHouse, Salad, WashingMachine } from "lucide-react";
+import { BedDouble, Beer, CarTaxiFront, MapPlus, Salad, WashingMachine } from "lucide-react";
 
 export default function Services() {
   return (
@@ -21,7 +21,7 @@ export default function Services() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
   {[
-    { icon: <MapPinHouse size={48} />, title: "Travel Plan" },
+    { icon: <MapPlus size={48} />, title: "Travel Plan" },
     { icon: <Salad size={48} />, title: "Catering Service" },
     { icon: <BedDouble size={48} />, title: "Babysitting" },
     { icon: <WashingMachine size={48} />, title: "Laundry" },
