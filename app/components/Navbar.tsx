@@ -321,11 +321,11 @@ export default function Header() {
                   </li>
 
                   <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-8 py-1">
-                    <Link href="/blog">News</Link>
+                    <Link href="/blogs">News</Link>
                   </li>
 
                   <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-13 py-1">
-                    <Link href="/contact">Contact</Link>
+                    <Link href="/contact-us">Contact</Link>
                   </li>
                 </ul>
               </nav>
