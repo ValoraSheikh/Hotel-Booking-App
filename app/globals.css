@@ -9,3 +9,9 @@
   font-weight: 400;
   font-style: normal;
 }
+
+@media (width: 1024px) {
+  .fix-ipad {
+    @apply grid-cols-2;
+  }
+}

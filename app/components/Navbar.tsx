@@ -188,7 +188,7 @@ export default function Header() {
       <header className="header-section hidden md:block bg-white">
         {/* Top Nav */}
         <div className="top-nav border-b border-gray-200">
-          <div className="container mx-auto px-4 py-3 flex justify-between items-center text-sm text-gray-800">
+          <div className="container mx-auto px-4 py-3 flex justify-between items-center text-sm text-gray-800 lg:px-32">
             <ul className="tn-left flex gap-6">
               <li className="flex items-center gap-2 font-semibold">
                 <Phone /> (12) 345 67890
@@ -260,7 +260,7 @@ export default function Header() {
           </div>
         </div>
         {/* Main Menu Item */}
-        <div className="menu-item">
+        <div className="menu-item lg:px-32">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">
             <div className="logo">
               <Link href="/">
@@ -279,7 +279,7 @@ export default function Header() {
                   </li>
 
                   <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-15 py-1">
-                    <Link href="/about">About Us</Link>
+                    <Link href="/about-us">About Us</Link>
                   </li>
 
                   <li className="relative group after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all group-hover:after:w-4 py-1">

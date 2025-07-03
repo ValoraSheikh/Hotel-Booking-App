@@ -6,7 +6,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#222736] text-white text-sm">
+    <footer className="bg-[#222736] text-white text-sm lg:px-32">
       {/* Top Footer Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col lg:flex-row lg:justify-between gap-12">
@@ -100,7 +100,7 @@ export default function Footer() {
       </div>
 
       {/* Copyright Section */}
-      <div className="bg-[rgba(16,20,31,0.2)] py-4">
+      <div className="bg-[rgba(16,20,31,0.2)] py-4 ">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between items-center text-[#aaaab3] text-sm gap-4">
           {/* Links */}
           <ul className="flex flex-wrap gap-6">
