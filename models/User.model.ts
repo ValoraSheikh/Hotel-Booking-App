@@ -1,11 +1,11 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface IUser{
+export interface IUser {
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   image?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -15,24 +15,24 @@ const userSchema = new Schema<IUser>(
   {
     name: {
       type: String,
-      required: [true, 'Name is required'],
+      required: [true, "Name is required"],
       trim: true,
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: [true, "Email is required"],
       unique: true,
       lowercase: true,
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: [true, "Password is required"],
       select: false, // Don't expose password by default
     },
     role: {
       type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
+      enum: ["user", "admin"],
+      default: "user",
     },
     image: {
       type: String, // Used by NextAuth (Google login etc)
@@ -45,7 +45,6 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -54,5 +53,5 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-const User = models.User || model('User', userSchema);
+const User = models?.User || model<IUser>("User", userSchema);
 export default User;
