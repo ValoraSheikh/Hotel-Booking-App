@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const room = () => {
@@ -493,12 +494,12 @@ const room = () => {
                   <p className="text-xs text-emerald-600">Free cancellation</p>
                 </div>
                 <div className="flex justify-center mt-6">
-                <a
-                  href="#"
+                <Link
+                  href="/rooms/2"
                   className="text-sm text-black uppercase font-semibold tracking-wider border-b-2 border-[#dfa974] pb-[2px]"
                 >
                   More details
-                </a>
+                </Link>
                 </div>
               </div>
               {/* END Price and Book Button */}
