@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 
 export interface IBooking {
   user: Types.ObjectId;
+  phoneNo: number;
   room: Types.ObjectId;
   checkIn: Date;
   checkOut: Date;
@@ -19,6 +20,10 @@ const bookingSchema = new Schema<IBooking>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    phoneNo: {
+      type: Number,
+      required: true
     },
     room: {
       type: Schema.Types.ObjectId,
