@@ -68,7 +68,7 @@ const page = () => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 <option>1</option>
-                <option selected="">2</option>
+                <option defaultValue="">2</option>
                 <option>3</option>
                 <option>4</option>
                 <option>5+</option>
@@ -86,7 +86,7 @@ const page = () => {
                 name="hotel-children"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
-                <option selected="">0</option>
+                <option defaultValue="">0</option>
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
@@ -105,7 +105,7 @@ const page = () => {
                 name="hotel-rooms"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
-                <option selected="">1</option>
+                <option defaultValue="">1</option>
                 <option>2</option>
                 <option>3</option>
                 <option>4+</option>
@@ -143,6 +143,8 @@ const page = () => {
         {/* Example Image */}
         <div className="mt-6">
           <Image
+          height={500}
+          width={500}
             src="https://picsum.photos/600/200?random=1"
             alt="Hotel scenic view"
             className="w-full h-32 object-cover rounded-md"

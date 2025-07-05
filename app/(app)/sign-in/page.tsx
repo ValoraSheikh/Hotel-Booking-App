@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const page = () => {
@@ -8,10 +9,10 @@ const page = () => {
         <div className="max-w-sm w-full text-gray-600">
           <div className="text-center">
             <Image
-              src="https://floatui.com/logo.svg"
+              src="/img/logo.png"
               alt="hello"
-              width={150}
-              height={500}
+              width={100}
+              height={50}
               className="mx-auto"
             />
             <div className="mt-5 space-y-2">
@@ -20,12 +21,12 @@ const page = () => {
               </h3>
               <p className="">
                 Don&apos;t have an account? {" "}
-                <a
-                  href="javascript:void(0)"
+                <Link
+                  href="/sign-up"
                   className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
                   Sign up
-                </a>
+                </Link>
               </p>
             </div>
           </div>
