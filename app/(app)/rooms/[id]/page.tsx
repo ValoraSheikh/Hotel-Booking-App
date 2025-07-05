@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function HotelRoomDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -563,7 +564,9 @@ export default function HotelRoomDetails() {
                     </div>
 
                     <Button className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700">
-                      Book Now
+                      <Link href='/booking'>
+                        Book Now
+                      </Link>
                     </Button>
 
                     <p className="text-xs text-gray-600 text-center">
