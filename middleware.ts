@@ -20,5 +20,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  const isAuth = !!token;
+  const isAuthPage = pathname === "/sign-in" || pathname === "/sign-up";
+
+  if (isAuth && isAuthPage) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   return NextResponse.next();
 }

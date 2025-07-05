@@ -1,20 +1,30 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SignUpPage() {
+  const { status } = useSession();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "creating" | "logging-in">(
-    "idle"
-  );
+  const [processStatus, setStatus] = useState<
+    "idle" | "creating" | "logging-in"
+  >("idle");
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/"); // redirect to home or dashboard
+    }
+  }, [status, router]);
+
+  // Optional: render nothing while checking
+  if (status === "loading") return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,14 +73,13 @@ export default function SignUpPage() {
   return (
     <main className="w-full flex min-h-screen">
       {/* Left Section - Hidden on mobile */}
-      <div className="relative flex-1 hidden items-center justify-center bg-gray-900 lg:flex">
-        <div
-          className="absolute inset-0 my-auto h-[500px]"
-          style={{
-            background:
-              "linear-gradient(152.92deg, rgba(192,132,252,0.2) 4.54%, rgba(232,121,249,0.26) 34.2%, rgba(192,132,252,0.1) 77.55%)",
-            filter: "blur(118px)",
-          }}
+      <div className="relative flex-1 hidden lg:block h-screen">
+        <Image
+          src=" https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Signup"
+          fill
+          className="object-cover"
+          priority
         />
       </div>
 
@@ -100,7 +109,7 @@ export default function SignUpPage() {
             <button
               type="button"
               className="flex items-center justify-center py-2.5 border rounded-lg hover:bg-gray-50 transition"
-              onClick={() => signIn("google")}
+              onClick={() => signIn("google", { callbackUrl: "/" })}
             >
               <Image
                 src="https://raw.githubusercontent.com/sidiDev/remote-assets/7cd06bf1d8859c578c2efbfda2c68bd6bedc66d8/google-icon.svg"
@@ -156,9 +165,9 @@ export default function SignUpPage() {
             </div>
             <button
               type="submit"
-              disabled={status !== "idle"}
+              disabled={processStatus !== "idle"}
               className={`w-full px-4 py-2 text-white font-medium bg-indigo-600 rounded-lg transition ${
-                status !== "idle"
+                processStatus !== "idle"
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-indigo-500"
               }`}
@@ -168,7 +177,7 @@ export default function SignUpPage() {
                   idle: "Create account",
                   creating: "Creating account…",
                   "logging-in": "Logging in…",
-                }[status]
+                }[processStatus]
               }
             </button>
           </form>

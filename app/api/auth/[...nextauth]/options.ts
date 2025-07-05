@@ -11,6 +11,10 @@ const rateLimiter = new RateLimiterMemory({
   duration: 60 * 5, // per 5 minutes
 });
 
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.NEXTAUTH_SECRET) {
+  throw new Error("Missing critical env variables in authOptions config");
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -23,7 +27,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing email and Password");
         }
 
-        await rateLimiter.consume(credentials.email);
+        try {
+          await rateLimiter.consume(credentials.email);
+        } catch (error) {
+          console.error("Rate limit error:", error);
+          throw error;
+        }
 
         try {
           await dbConnect();
@@ -70,6 +79,8 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             image: user.image,
+            // password: undefined,
+            provider: "google",
             role: "user", // default role
           });
         }

@@ -4,7 +4,8 @@ import bcrypt from "bcryptjs";
 export interface IUser {
   name: string;
   email: string;
-  password: string;
+  password?: string;
+  provider: "credentials" | "google";
   role: "user" | "admin";
   image?: string;
   createdAt: Date;
@@ -26,8 +27,15 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      select: false, // Don't expose password by default
+      required: function () {
+        return this.provider === "credentials";
+      },
+      select: false,
+    },
+    provider: {
+      type: String,
+      enum: ["credentials", "google"],
+      default: "credentials",
     },
     role: {
       type: String,
@@ -46,7 +54,8 @@ const userSchema = new Schema<IUser>(
 );
 
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
+  // Only hash the password if it's modified AND exists
+  if (this.isModified("password") && this.password) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
