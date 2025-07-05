@@ -4,6 +4,12 @@ import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { RateLimiterMemory } from "rate-limiter-flexible";
+
+const rateLimiter = new RateLimiterMemory({
+  points: 5, // Max 5 attempts
+  duration: 60 * 5, // per 5 minutes
+});
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,6 +22,8 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing email and Password");
         }
+
+        await rateLimiter.consume(credentials.email);
 
         try {
           await dbConnect();
