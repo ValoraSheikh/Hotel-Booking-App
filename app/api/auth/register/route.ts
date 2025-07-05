@@ -12,7 +12,14 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email, password } = await request.json();
 
-    await rateLimiter.consume(email);
+    try {
+      await rateLimiter.consume(email);
+    } catch {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -54,7 +61,7 @@ export async function POST(request: NextRequest) {
     await User.create({ name, email, password });
 
     return NextResponse.json(
-      { messsage: "User registered successfully" },
+      { message: "User registered successfully" },
       { status: 200 }
     );
   } catch (error) {
