@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       !price ||
       !roomNumber ||
       !Array.isArray(images) ||
+      images.length === 0 ||
       !Array.isArray(services)
     ) {
       return NextResponse.json(
@@ -87,7 +88,7 @@ export async function GET() {
     console.error("Having error in getting rooms", error);
     return NextResponse.json(
       {
-        error: "Failed while getting todos",
+        error: "Failed while getting rooms",
       },
       { status: 400 }
     );
