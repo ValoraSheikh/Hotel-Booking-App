@@ -4,12 +4,27 @@ import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
 import Review from "@/models/Review.model";
 import Room from "@/models/Room.model";
+import { RateLimiterMemory } from "rate-limiter-flexible";
+
+const rateLimiter = new RateLimiterMemory({
+  points: 5, // 5 requests
+  duration: 600, // per 10 minutes (600 seconds)
+});
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await rateLimiter.consume(session.user.id); // Rate limit by user ID
+  } catch {
+    return NextResponse.json(
+      { error: "Too many review attempts. Please try again later." },
+      { status: 429 }
+    );
   }
 
   try {
@@ -57,9 +72,40 @@ export async function POST(req: NextRequest) {
       comment,
     });
 
-    return NextResponse.json({ message: "Review added", review }, { status: 201 });
+    return NextResponse.json(
+      { message: "Review added", review },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating review:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    await dbConnect();
+
+    const { searchParams } = new URL(req.url);
+    const roomId = searchParams.get("room");
+
+    if (!roomId) {
+      return NextResponse.json(
+        { error: "Room ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const reviews = await Review.find({ room: roomId })
+      .populate("user", "name") // Show user name only
+      .sort({ createdAt: -1 }); // Most recent first
+
+    return NextResponse.json({ reviews }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
