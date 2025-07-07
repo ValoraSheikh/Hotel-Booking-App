@@ -63,9 +63,16 @@ export async function POST(req: NextRequest) {
       isAvailable,
     });
 
-    return NextResponse.json(newRoom, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Room created successfully",
+        room: newRoom,
+      },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error("Error creating room:", error);
+    console.error("POST /api/rooms", { error });
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -77,13 +84,15 @@ export async function GET() {
   try {
     await dbConnect();
 
-    const rooms = await Room.find()
+    const rooms = await Room.find().lean();
 
-    if (!rooms || rooms.length === 0) {
-      return NextResponse.json([], { status: 200 });
-    }
-
-    return NextResponse.json(rooms, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        rooms,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Having error in getting rooms", error);
     return NextResponse.json(

@@ -22,15 +22,21 @@ export async function GET(
 
     await dbConnect();
 
-    const room = await Room.findById(id);
+    const room = await Room.findById(id).lean();
 
     if (!room) {
-      return NextResponse.json({ error: "Room not found", status: 404 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Room not found",
+        },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(room, { status: 200 });
   } catch (error) {
-    console.error("Room error:", error);
+    console.log("Room error:", error);
     return NextResponse.json(
       { error: "Failed to get room with id" },
       { status: 500 }
@@ -67,7 +73,7 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error("DELETE error:", error);
+    console.log("DELETE error:", error);
     return NextResponse.json(
       { error: "Failed to delete room" },
       { status: 500 }
@@ -97,7 +103,7 @@ export async function PATCH(
 
     await dbConnect();
 
-    const room = await Room.findById(id);
+    const room = await Room.findById(id).lean();
     if (!room) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
@@ -110,9 +116,16 @@ export async function PATCH(
       { new: true }
     );
 
-    return NextResponse.json(updatedRoom, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Room updated successfully",
+        room: updatedRoom,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("PATCH error:", error);
+    console.log("PATCH error:", error);
     return NextResponse.json(
       { error: "Failed to update room" },
       { status: 500 }
