@@ -4,7 +4,6 @@ import Room from "@/models/Room.model"; // assuming it's set up
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -69,6 +68,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    await dbConnect();
+
+    const rooms = await Room.find()
+
+    if (!rooms || rooms.length === 0) {
+      return NextResponse.json([], { status: 200 });
+    }
+
+    return NextResponse.json(rooms, { status: 201 });
+  } catch (error) {
+    console.error("Having error in getting rooms", error);
+    return NextResponse.json(
+      {
+        error: "Failed while getting todos",
+      },
+      { status: 400 }
     );
   }
 }
