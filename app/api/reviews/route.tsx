@@ -5,6 +5,7 @@ import dbConnect from "@/lib/db";
 import Review from "@/models/Review.model";
 import Room from "@/models/Room.model";
 import { RateLimiterMemory } from "rate-limiter-flexible";
+import { updateRoomAverageRating } from "@/lib/updateRoomRating";
 
 const rateLimiter = new RateLimiterMemory({
   points: 5, // 5 requests
@@ -71,6 +72,8 @@ export async function POST(req: NextRequest) {
       rating,
       comment,
     });
+
+    await updateRoomAverageRating(room);
 
     return NextResponse.json(
       { message: "Review added", review },

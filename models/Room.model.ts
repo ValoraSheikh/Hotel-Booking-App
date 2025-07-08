@@ -14,6 +14,7 @@ export interface IRoom {
   isAvailable: boolean;
   createdAt: Date;
   updatedAt: Date;
+  rating: number;
 }
 
 const roomSchema = new Schema<IRoom>(
@@ -63,6 +64,10 @@ const roomSchema = new Schema<IRoom>(
     featured: {
       type: Boolean,
       default: false,
+    },
+    rating: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
