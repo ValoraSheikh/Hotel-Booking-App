@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import UserDropdown from "./sections/UserDropdown";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -234,37 +235,7 @@ export default function Header() {
                 Booking Now
               </a>
               <div className="language-option relative flex items-center gap-2 cursor-pointer">
-                <Image
-                  src="/img/india-flag.jpg"
-                  width={30}
-                  height={30}
-                  alt="flag"
-                  className=" object-cover"
-                />
-
-                <span className="uppercase font-medium">
-                  IN <i className="fa fa-angle-down ml-1"></i>
-                </span>
-                <div className="flag-dropdown absolute left-0 top-8 hidden bg-white shadow-lg">
-                  <ul>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 hover:text-[#dfa974]"
-                      >
-                        Zi
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 hover:text-[#dfa974]"
-                      >
-                        Fr
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                {session?.user && <UserDropdown />}
               </div>
             </div>
           </div>

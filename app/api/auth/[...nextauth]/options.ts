@@ -37,7 +37,9 @@ export const authOptions: NextAuthOptions = {
         try {
           await dbConnect();
 
-          const user = await User.findOne({ email: credentials?.email }).select('+password');
+          const user = await User.findOne({ email: credentials?.email }).select(
+            "+password"
+          );
 
           if (!user) {
             throw new Error("No user found");
@@ -64,7 +66,7 @@ export const authOptions: NextAuthOptions = {
 
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,  
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
 
@@ -96,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.id = dbUser._id;
           token.role = dbUser.role;
+          token.name = dbUser.name; // ✅ Get name from DB
         }
       }
 
@@ -103,6 +106,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.role = (user as any).role || token.role || "user";
+        token.name = user.name; // ✅ This is the missing line
       }
 
       return token;
@@ -112,6 +116,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role;
+        session.user.name = token.name; // ✅ Add this
       }
       return session;
     },
