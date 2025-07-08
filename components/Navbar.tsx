@@ -14,8 +14,10 @@ import {
   Twitter,
   X,
 } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
+  const { data: session } = useSession();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Prevent background scroll when mobile menu open
@@ -43,11 +45,11 @@ export default function Header() {
       ></div>
 
       {/* Canvas Open Icon */}
-      {/* <div className="canvas-open md:hidden fixed top-4 left-4 z-50">
+      <div className="canvas-open md:hidden fixed top-4 left-4 z-50">
         <button onClick={() => setMobileMenuOpen(true)}>
           <i className="icon_menu text-2xl text-gray-900"></i>
         </button>
-      </div> */}
+      </div>
 
       {/* Offcanvas Menu Wrapper */}
       <div
@@ -107,7 +109,7 @@ export default function Header() {
             </li>
             <div className="bg-gray-200 w-full h-[1px]"></div>
             <li>
-              <Link href="/about" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/about-us" onClick={() => setMobileMenuOpen(false)}>
                 About Us
               </Link>
             </li>
@@ -145,13 +147,13 @@ export default function Header() {
 
             <div className="bg-gray-200 w-full h-[1px]"></div>
             <li>
-              <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/blogs" onClick={() => setMobileMenuOpen(false)}>
                 News
               </Link>
             </li>
             <div className="bg-gray-200 w-full h-[1px]"></div>
             <li>
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/contact-us" onClick={() => setMobileMenuOpen(false)}>
                 Contact
               </Link>
             </li>
@@ -181,6 +183,14 @@ export default function Header() {
           <li className="flex items-center gap-2">
             <Mails /> info.colorlib@gmail.com
           </li>
+          {session?.user && (
+            <button
+              onClick={() => signOut({ callbackUrl: "/sign-in" })}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              Logout
+            </button>
+          )}
         </ul>
       </div>
 
