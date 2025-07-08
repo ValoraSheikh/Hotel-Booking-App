@@ -263,43 +263,11 @@ export default function Header() {
                     <Link href="/about-us">About Us</Link>
                   </li>
 
-                  <li className="relative group after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all group-hover:after:w-4 py-1">
-                    <span className="cursor-pointer py-4">Pages</span>
-                    <ul className="absolute left-0 top-full mt-2 bg-white shadow-lg hidden group-hover:block z-50 min-w-[200px]">
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:text-[#dfa974]"
-                        >
-                          Room Details
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:text-[#dfa974]"
-                        >
-                          Blog Details
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:text-[#dfa974]"
-                        >
-                          Family Room
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:text-[#dfa974]"
-                        >
-                          Premium Room
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
+                  
+                    <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-15 py-1">
+                      <Link href="/bookings">Bookings</Link>
+                    </li>
+                  
 
                   <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-8 py-1">
                     <Link href="/blogs">News</Link>

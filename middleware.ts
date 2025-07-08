@@ -4,7 +4,7 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 // Define protected routes
-const protectedRoutes = ["/dashboard", "/booking"];
+const protectedRoutes = ["/dashboard", "/booking", "/bookings"];
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
