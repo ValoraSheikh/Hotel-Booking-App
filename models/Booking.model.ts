@@ -23,7 +23,7 @@ const bookingSchema = new Schema<IBooking>(
     },
     phoneNo: {
       type: Number,
-      required: true
+      required: true,
     },
     room: {
       type: Schema.Types.ObjectId,
@@ -55,6 +55,11 @@ const bookingSchema = new Schema<IBooking>(
   },
   { timestamps: true }
 );
+
+bookingSchema.index({ user: 1 });
+bookingSchema.index({ room: 1 });
+bookingSchema.index({ status: 1 });
+bookingSchema.index({ checkIn: 1 }); // helpful for availability
 
 const Booking = models?.Booking || model<IBooking>("Booking", bookingSchema);
 export default Booking;

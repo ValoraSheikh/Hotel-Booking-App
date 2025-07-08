@@ -73,5 +73,10 @@ const roomSchema = new Schema<IRoom>(
   { timestamps: true }
 );
 
+roomSchema.index({ title: "text", description: "text" }); // text search
+roomSchema.index({ price: 1 });
+roomSchema.index({ guests: 1 });
+roomSchema.index({ averageRating: -1 });
+
 const Room = models?.Room || model<IRoom>("Room", roomSchema);
 export default Room;

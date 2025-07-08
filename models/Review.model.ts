@@ -38,5 +38,7 @@ const reviewSchema = new Schema<IReview>(
   { timestamps: true }
 );
 
+reviewSchema.index({ room: 1 }); // Ascending index on roomId
+
 const Review = models?.Review || model<IReview>("Review", reviewSchema);
 export default Review;
