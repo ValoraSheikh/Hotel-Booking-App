@@ -53,7 +53,7 @@ const userSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-userSchema.index({ email: 1 }, { unique: true }); // ensure unique + fast
+// userSchema.index({ email: 1 }, { unique: true }); // ensure unique + fast
 
 userSchema.pre("save", async function (next) {
   // Only hash the password if it's modified AND exists
