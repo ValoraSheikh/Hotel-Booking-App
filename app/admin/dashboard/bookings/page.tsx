@@ -23,14 +23,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 
 // Mock data for bookings
 const mockBookings = [
@@ -119,7 +111,7 @@ export default function BookingsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
+  const [rowsPerPage, setRowsPerPage] = useState(10)
 
   // Filter bookings based on search and status
   const filteredBookings = mockBookings.filter((booking) => {
@@ -134,9 +126,15 @@ export default function BookingsPage() {
   })
 
   // Pagination
-  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedBookings = filteredBookings.slice(startIndex, startIndex + itemsPerPage)
+  const totalPages = Math.ceil(filteredBookings.length / rowsPerPage)
+  const startIndex = (currentPage - 1) * rowsPerPage
+  const paginatedBookings = filteredBookings.slice(startIndex, startIndex + rowsPerPage)
+
+  // Reset to page 1 when rows per page changes
+  const handleRowsPerPageChange = (value: string) => {
+    setRowsPerPage(Number.parseInt(value))
+    setCurrentPage(1)
+  }
 
   const handleCancelBooking = (bookingId: string) => {
     // Handle booking cancellation logic here
@@ -150,230 +148,266 @@ export default function BookingsPage() {
 
   return (
     <TooltipProvider>
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Bookings Management</h2>
-            <p className="text-muted-foreground">View and manage room bookings made by users.</p>
-          </div>
-        </div>
-
-        {/* Search and Filter Controls */}
-        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name, email, or room..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="booked">Booked</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Bookings Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Bookings ({filteredBookings.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[200px]">User</TableHead>
-                    <TableHead className="min-w-[120px]">Phone</TableHead>
-                    <TableHead className="min-w-[180px]">Room</TableHead>
-                    <TableHead className="min-w-[80px]">Guests</TableHead>
-                    <TableHead className="min-w-[100px]">Check-in</TableHead>
-                    <TableHead className="min-w-[100px]">Check-out</TableHead>
-                    <TableHead className="min-w-[100px]">Total Price</TableHead>
-                    <TableHead className="min-w-[100px]">Status</TableHead>
-                    <TableHead className="min-w-[80px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedBookings.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={9} className="text-center py-8">
-                        No bookings found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    paginatedBookings.map((booking) => (
-                      <TableRow key={booking.id}>
-                        <TableCell>
-                          <div className="space-y-1">
-                            <div className="font-medium">{booking.user.name}</div>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="text-sm text-muted-foreground truncate max-w-[180px]">
-                                  {booking.user.email}
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{booking.user.email}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Phone className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{booking.phoneNo}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex items-center space-x-2">
-                                <Bed className="h-4 w-4 text-muted-foreground" />
-                                <span className="text-sm truncate max-w-[150px]">{booking.room.title}</span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{booking.room.title}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{booking.guests}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{format(booking.checkIn, "MMM dd, yyyy")}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{format(booking.checkOut, "MMM dd, yyyy")}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <DollarSign className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm font-medium">${booking.totalPrice}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(booking.status)}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleViewBooking(booking.id)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Details
-                              </DropdownMenuItem>
-                              {booking.status === "booked" && (
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                      <X className="mr-2 h-4 w-4" />
-                                      Cancel Booking
-                                    </DropdownMenuItem>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        Are you sure you want to cancel this booking for{" "}
-                                        <strong>{booking.user.name}</strong>? This action cannot be undone.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => handleCancelBooking(booking.id)}
-                                        className="bg-red-600 hover:bg-red-700"
-                                      >
-                                        Cancel Booking
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+      <div className="w-full h-full overflow-hidden flex flex-col bg-background">
+        {/* Page Header - Responsive spacing */}
+        <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex items-start justify-between space-y-2 sm:items-center sm:space-y-0">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight truncate">Bookings Management</h2>
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">
+                View and manage room bookings made by users.
+              </p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      if (currentPage > 1) setCurrentPage(currentPage - 1)
-                    }}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        setCurrentPage(page)
-                      }}
-                      isActive={currentPage === page}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      if (currentPage < totalPages) setCurrentPage(currentPage + 1)
-                    }}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
           </div>
-        )}
+        </div>
+
+        {/* Search and Filter Controls - Fluid spacing */}
+        <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
+          <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
+            <div className="relative flex-1 min-w-0 max-w-full sm:max-w-sm">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, email, or room..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 w-full"
+              />
+            </div>
+            <div className="flex items-center space-x-2 flex-shrink-0">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="booked">Booked</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Area - Flexible and fills remaining space */}
+        <div className="flex-1 min-h-0 overflow-hidden px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
+          <Card className="h-full overflow-hidden flex flex-col">
+            <CardHeader className="flex-shrink-0 pb-3 px-4 sm:px-6">
+              <CardTitle className="text-lg sm:text-xl">Bookings ({filteredBookings.length})</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 min-h-0 overflow-hidden p-0">
+              {/* Table Container - Internal scrolling */}
+              <div className="h-full flex flex-col">
+                <div className="flex-1 min-h-0 overflow-auto px-4 sm:px-6">
+                  <div className="min-w-full inline-block align-middle h-full">
+                    <div className="h-full overflow-auto">
+                      <Table className="relative">
+                        <TableHeader className="sticky top-0 bg-card z-10 shadow-sm">
+                          <TableRow>
+                            <TableHead className="w-[200px] min-w-[180px]">User</TableHead>
+                            <TableHead className="w-[120px] min-w-[100px]">Phone</TableHead>
+                            <TableHead className="w-[180px] min-w-[150px]">Room</TableHead>
+                            <TableHead className="w-[80px] min-w-[70px] text-center">Guests</TableHead>
+                            <TableHead className="w-[110px] min-w-[100px]">Check-in</TableHead>
+                            <TableHead className="w-[110px] min-w-[100px]">Check-out</TableHead>
+                            <TableHead className="w-[100px] min-w-[90px] text-right">Price</TableHead>
+                            <TableHead className="w-[100px] min-w-[90px]">Status</TableHead>
+                            <TableHead className="w-[60px] min-w-[60px] text-center">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {paginatedBookings.length === 0 ? (
+                            <TableCell colSpan={9} className="text-center py-8 sm:py-12">
+                              <div className="flex flex-col items-center space-y-3 px-4">
+                                <div className="text-sm sm:text-base text-muted-foreground">No bookings found.</div>
+                                {searchTerm || statusFilter !== "all" ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSearchTerm("")
+                                      setStatusFilter("all")
+                                    }}
+                                  >
+                                    Clear filters
+                                  </Button>
+                                ) : null}
+                              </div>
+                            </TableCell>
+                          ) : (
+                            paginatedBookings.map((booking) => (
+                              <TableRow key={booking.id} className="hover:bg-muted/50">
+                                <TableCell className="py-2 sm:py-3">
+                                  <div className="space-y-1">
+                                    <div className="font-medium text-sm truncate max-w-[160px]">
+                                      {booking.user.name}
+                                    </div>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className="text-xs text-muted-foreground truncate max-w-[160px] cursor-help">
+                                          {booking.user.email}
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="top">
+                                        <p>{booking.user.email}</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3">
+                                  <div className="flex items-center space-x-1">
+                                    <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                                    <span className="text-xs truncate">{booking.phoneNo}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center space-x-1 cursor-help">
+                                        <Bed className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                                        <span className="text-xs truncate max-w-[130px]">{booking.room.title}</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                      <p>{booking.room.title}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3 text-center">
+                                  <div className="flex items-center justify-center space-x-1">
+                                    <Users className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-xs">{booking.guests}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3">
+                                  <div className="flex items-center space-x-1">
+                                    <Calendar className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                                    <span className="text-xs whitespace-nowrap">
+                                      {format(booking.checkIn, "MMM dd")}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3">
+                                  <div className="flex items-center space-x-1">
+                                    <Calendar className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                                    <span className="text-xs whitespace-nowrap">
+                                      {format(booking.checkOut, "MMM dd")}
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3 text-right">
+                                  <div className="flex items-center justify-end space-x-1">
+                                    <DollarSign className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-xs font-medium">{booking.totalPrice}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-2 sm:py-3">{getStatusBadge(booking.status)}</TableCell>
+                                <TableCell className="py-2 sm:py-3 text-center">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" className="h-7 w-7 p-0">
+                                        <span className="sr-only">Open menu</span>
+                                        <MoreHorizontal className="h-3 w-3" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem onClick={() => handleViewBooking(booking.id)}>
+                                        <Eye className="mr-2 h-4 w-4" />
+                                        View Details
+                                      </DropdownMenuItem>
+                                      {booking.status === "booked" && (
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                              <X className="mr-2 h-4 w-4" />
+                                              Cancel Booking
+                                            </DropdownMenuItem>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                Are you sure you want to cancel this booking for{" "}
+                                                <strong>{booking.user.name}</strong>? This action cannot be undone.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() => handleCancelBooking(booking.id)}
+                                                className="bg-red-600 hover:bg-red-700"
+                                              >
+                                                Cancel Booking
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      )}
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Material UI Style Pagination */}
+                <div className="flex-shrink-0 border-t bg-card px-4 sm:px-6 py-3">
+                  <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                    {/* Rows per page */}
+                    <div className="flex items-center space-x-2 text-sm">
+                      <span className="text-muted-foreground whitespace-nowrap">Rows per page:</span>
+                      <Select value={rowsPerPage.toString()} onValueChange={handleRowsPerPageChange}>
+                        <SelectTrigger className="w-16 h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="20">20</SelectItem>
+                          <SelectItem value="30">30</SelectItem>
+                          <SelectItem value="40">40</SelectItem>
+                          <SelectItem value="50">50</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Page info and navigation */}
+                    <div className="flex items-center space-x-4">
+                      <div className="text-sm text-muted-foreground whitespace-nowrap">
+                        Page {currentPage} of {totalPages}
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                          className="h-8 px-3"
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                          disabled={currentPage === totalPages}
+                          className="h-8 px-3"
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </TooltipProvider>
   )

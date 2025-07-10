@@ -1,23 +1,28 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
+import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Edit, Eye, Hotel, MoreHorizontal, Search, Star, Trash2 } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Edit, Eye, Hotel, MoreHorizontal, Search, Star, Trash2, ChevronDown } from "lucide-react"
 import Image from "next/image"
-import { AddRoomModal } from "@/components/add-room-modal"
+import { AddRoomModal } from "@/components/admin/add-room-modal"
 
 // Sample data
 const sampleRooms = [
@@ -77,9 +82,12 @@ export default function HotelDashboard() {
   const [rooms, setRooms] = useState(sampleRooms)
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [showEmptyState, setShowEmptyState] = useState(false)
 
-  const itemsPerPage = 5
+  // Remove: const itemsPerPage = 5
+  // The pagination logic will now use rowsPerPage state
 
   // Filter rooms based on search term
   const filteredRooms = rooms.filter(
@@ -87,9 +95,15 @@ export default function HotelDashboard() {
   )
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredRooms.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedRooms = filteredRooms.slice(startIndex, startIndex + itemsPerPage)
+  const totalPages = Math.ceil(filteredRooms.length / rowsPerPage)
+  const startIndex = (currentPage - 1) * rowsPerPage
+  const paginatedRooms = filteredRooms.slice(startIndex, startIndex + rowsPerPage)
+
+  const handleAddRoom = (event: React.FormEvent) => {
+    event.preventDefault()
+    // Add room logic would go here
+    setIsAddDialogOpen(false)
+  }
 
   const handleDeleteRoom = (id: number) => {
     setRooms(rooms.filter((room) => room.id !== id))
@@ -121,7 +135,51 @@ export default function HotelDashboard() {
 
         {/* Action Bar */}
         <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-          <AddRoomModal />
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <AddRoomModal/>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <form onSubmit={handleAddRoom}>
+                <DialogHeader>
+                  <DialogTitle>Add New Room</DialogTitle>
+                  <DialogDescription>
+                    Create a new room listing. Fill in all the required information.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="title">Room Title</Label>
+                    <Input id="title" placeholder="Enter room title" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="price">Price ($)</Label>
+                      <Input id="price" type="number" placeholder="299" required />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="capacity">Capacity</Label>
+                      <Input id="capacity" type="number" placeholder="2" required />
+                    </div>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="beds">Bed Configuration</Label>
+                    <Input id="beds" placeholder="1 King Bed" required />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" placeholder="Room description..." />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Add Room</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
 
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -147,7 +205,7 @@ export default function HotelDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AddRoomModal />
+              <AddRoomModal/>
             </CardContent>
           </Card>
         ) : (
@@ -233,49 +291,62 @@ export default function HotelDashboard() {
                 </Table>
               </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-6">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            setCurrentPage(Math.max(1, currentPage - 1))
-                          }}
-                          className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                        />
-                      </PaginationItem>
-
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <PaginationItem key={page}>
-                          <PaginationLink
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              setCurrentPage(page)
+              {/* Enhanced Pagination */}
+              {filteredRooms.length > 0 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
+                  {/* Rows per page */}
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">Rows per page:</span>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-8 px-3 bg-transparent">
+                          {rowsPerPage}
+                          <ChevronDown className="ml-1 h-3 w-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        {[10, 20, 30, 40, 50].map((size) => (
+                          <DropdownMenuItem
+                            key={size}
+                            onClick={() => {
+                              setRowsPerPage(size)
+                              setCurrentPage(1) // Reset to first page when changing page size
                             }}
-                            isActive={currentPage === page}
+                            className={rowsPerPage === size ? "bg-accent" : ""}
                           >
-                            {page}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
+                            {size}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
 
-                      <PaginationItem>
-                        <PaginationNext
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            setCurrentPage(Math.min(totalPages, currentPage + 1))
-                          }}
-                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
+                  {/* Page info and navigation */}
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="h-8 px-3"
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="h-8 px-3"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>

@@ -20,6 +20,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Mock data for reviews
 const mockReviews = [
@@ -108,7 +109,8 @@ export default function ReviewsManagement() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [reviewToDelete, setReviewToDelete] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const itemsPerPage = rowsPerPage // Replace the hardcoded itemsPerPage = 5
 
   // Filter reviews based on search and rating
   const filteredReviews = reviews.filter((review) => {
@@ -301,46 +303,64 @@ export default function ReviewsManagement() {
           </CardContent>
         </Card>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredReviews.length)} of{" "}
-              {filteredReviews.length} reviews
-            </p>
-            <div className="flex items-center space-x-2">
+        {/* Material UI Style Pagination */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t pt-4">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>Rows per page:</span>
+              <Select
+                value={rowsPerPage.toString()}
+                onValueChange={(value) => {
+                  setRowsPerPage(Number(value))
+                  setCurrentPage(1) // Reset to first page when changing rows per page
+                }}
+              >
+                <SelectTrigger className="w-[70px] h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="30">30</SelectItem>
+                  <SelectItem value="40">40</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="hidden sm:block">
+              {startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredReviews.length)} of {filteredReviews.length}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="text-sm text-muted-foreground sm:hidden">
+              {startIndex + 1}–{Math.min(startIndex + itemsPerPage, filteredReviews.length)} of {filteredReviews.length}
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-muted-foreground mr-2">
+                Page {currentPage} of {totalPages}
+              </span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
+                className="h-8 px-3"
               >
                 Previous
               </Button>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                ))}
-              </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
+                className="h-8 px-3"
               >
                 Next
               </Button>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
