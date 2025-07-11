@@ -1,7 +1,68 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com', 'pagedone.io', 'flowbite.s3.amazonaws.com', 'www.material-tailwind.com', 'demos.creative-tim.com', 'tailwindcss.com', 'randomuser.me', 'api.uifaces.co', 'picsum.photos', 'lh3.googleusercontent.com', 'example.com', 'utfs.io'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pagedone.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'flowbite.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.material-tailwind.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'demos.creative-tim.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tailwindcss.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'randomuser.me',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.uifaces.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+      },
+      {
+        protocol: "https",
+        hostname: "**.ufs.sh", // ✅ allows any UploadThing subdomain
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.io", // optional if you're still using utfs.io links
+      },
+      {
+        protocol: 'https',
+        hostname: '**.uploadthing.com', // fallback if your UploadThing host has subdomains
+      },
+      {
+        protocol: 'https',
+        hostname: 'uploadthing-prod.s3.us-west-2.amazonaws.com', // commonly used CDN
+      },
+    ],
   },
 }
 
