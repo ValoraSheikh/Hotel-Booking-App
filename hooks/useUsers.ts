@@ -17,5 +17,8 @@ export const useUsers = () => {
       });
   }, []);
 
+  console.log("Here are the", users);
+  
+
   return { users, setUsers };
 };

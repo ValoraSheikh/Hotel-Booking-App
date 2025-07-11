@@ -1,13 +1,12 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import type React from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -16,31 +15,49 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { Plus, X } from "lucide-react"
-import Image from "next/image"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus, X } from "lucide-react";
+import Image from "next/image";
+import { UploadDropzone } from "@/lib/uploadthing";
 
 // Form schema
 const roomSchema = z.object({
-  title: z.string().min(1, "Room title is required").min(3, "Title must be at least 3 characters"),
-  description: z.string().min(1, "Description is required").min(10, "Description must be at least 10 characters"),
+  title: z
+    .string()
+    .min(1, "Room title is required")
+    .min(3, "Title must be at least 3 characters"),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .min(10, "Description must be at least 10 characters"),
   price: z.number().min(1, "Price must be greater than 0"),
-  capacity: z.number().min(1, "Capacity must be at least 1").max(20, "Capacity cannot exceed 20"),
+  capacity: z
+    .number()
+    .min(1, "Capacity must be at least 1")
+    .max(20, "Capacity cannot exceed 20"),
   size: z.number().min(1, "Room size is required"),
   beds: z.string().min(1, "Bed configuration is required"),
   roomNumber: z.string().min(1, "Room number is required"),
   services: z.array(z.string()).min(1, "At least one service must be selected"),
-  isAvailable: z.boolean().default(true),
-  featured: z.boolean().default(false),
-  rating: z.number().min(0).max(5).default(0),
-})
+  isAvailable: z.boolean().optional().default(true),
+  featured: z.boolean().optional().default(false),
+  rating: z.number().min(0).max(5).optional().default(0),
+});
 
-type RoomFormData = z.infer<typeof roomSchema>
+type RoomFormData = z.infer<typeof roomSchema>;
 
 const availableServices = [
   "WiFi",
@@ -55,7 +72,7 @@ const availableServices = [
   "Jacuzzi",
   "Kitchenette",
   "Workspace",
-]
+];
 
 const defaultValues: RoomFormData = {
   title: "",
@@ -69,59 +86,54 @@ const defaultValues: RoomFormData = {
   isAvailable: true,
   featured: false,
   rating: 0,
-}
+};
 
 export function AddRoomModal() {
-  const [open, setOpen] = useState(false)
-  const [selectedImages, setSelectedImages] = useState<File[]>([])
-  const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [open, setOpen] = useState(false);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<RoomFormData>({
     resolver: zodResolver(roomSchema),
     defaultValues,
-  })
+  });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || [])
-    const validFiles = files.filter((file) => file.type === "image/jpeg" || file.type === "image/png")
+  const onSubmit = async (data: RoomFormData) => {
+    setIsSubmitting(true);
+    try {
+      const formData = {
+        ...data,
+        images: imageUrls,
+      };
+      console.log("Room Form Data:", formData);
 
-    setSelectedImages((prev) => [...prev, ...validFiles])
+      const response = await fetch("/api/rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    // Create previews
-    validFiles.forEach((file) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setImagePreviews((prev) => [...prev, e.target?.result as string])
+      if (response.ok) {
+        form.reset(defaultValues);
+        setImageUrls([]);
+        setOpen(false);
+      } else {
+        console.error("Failed to add room");
+        alert("Failed to add room. Please try again.");
       }
-      reader.readAsDataURL(file)
-    })
-  }
-
-  const removeImage = (index: number) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index))
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index))
-  }
-
-  const onSubmit = (data: RoomFormData) => {
-    const formData = {
-      ...data,
-      images: selectedImages,
+    } catch (error) {
+      console.error("Error adding room:", error);
+      alert("An error occurred while adding the room.");
+    } finally {
+      setIsSubmitting(false);
     }
-    console.log("Room Form Data:", formData)
-
-    // Reset form and close modal
-    form.reset(defaultValues)
-    setSelectedImages([])
-    setImagePreviews([])
-    setOpen(false)
-  }
+  };
 
   const handleCancel = () => {
-    form.reset(defaultValues)
-    setSelectedImages([])
-    setImagePreviews([])
-    setOpen(false)
-  }
+    form.reset(defaultValues);
+    setImageUrls([]);
+    setOpen(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -134,14 +146,19 @@ export function AddRoomModal() {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Room</DialogTitle>
-          <DialogDescription>Create a new room listing with all the necessary details and amenities.</DialogDescription>
+          <DialogDescription>
+            Create a new room listing with all the necessary details and
+            amenities.
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Information Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Basic Information</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Basic Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -150,7 +167,10 @@ export function AddRoomModal() {
                     <FormItem>
                       <FormLabel>Room Title *</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Deluxe Ocean View Suite" {...field} />
+                        <Input
+                          placeholder="e.g., Deluxe Ocean View Suite"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -193,7 +213,9 @@ export function AddRoomModal() {
 
             {/* Room Details Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Room Details</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Room Details
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
@@ -206,7 +228,9 @@ export function AddRoomModal() {
                           type="number"
                           placeholder="299"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -225,7 +249,9 @@ export function AddRoomModal() {
                           type="number"
                           placeholder="2"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -244,7 +270,9 @@ export function AddRoomModal() {
                           type="number"
                           placeholder="450"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -261,7 +289,10 @@ export function AddRoomModal() {
                     <FormItem>
                       <FormLabel>Bed Configuration *</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 1 King Bed, 2 Queen Beds" {...field} />
+                        <Input
+                          placeholder="e.g., 1 King Bed, 2 Queen Beds"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -282,7 +313,9 @@ export function AddRoomModal() {
                           max="5"
                           placeholder="4.5"
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -294,14 +327,18 @@ export function AddRoomModal() {
 
             {/* Services Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Services & Amenities</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Services & Amenities
+              </h3>
               <FormField
                 control={form.control}
                 name="services"
                 render={() => (
                   <FormItem>
                     <FormLabel>Available Services *</FormLabel>
-                    <FormDescription>Select all services and amenities available in this room</FormDescription>
+                    <FormDescription>
+                      Select all services and amenities available in this room
+                    </FormDescription>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
                       {availableServices.map((service) => (
                         <FormField
@@ -310,20 +347,32 @@ export function AddRoomModal() {
                           name="services"
                           render={({ field }) => {
                             return (
-                              <FormItem key={service} className="flex flex-row items-start space-x-3 space-y-0">
+                              <FormItem
+                                key={service}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value?.includes(service)}
                                     onCheckedChange={(checked) => {
                                       return checked
-                                        ? field.onChange([...field.value, service])
-                                        : field.onChange(field.value?.filter((value) => value !== service))
+                                        ? field.onChange([
+                                            ...field.value,
+                                            service,
+                                          ])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== service
+                                            )
+                                          );
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="text-sm font-normal">{service}</FormLabel>
+                                <FormLabel className="text-sm font-normal">
+                                  {service}
+                                </FormLabel>
                               </FormItem>
-                            )
+                            );
                           }}
                         />
                       ))}
@@ -336,29 +385,46 @@ export function AddRoomModal() {
 
             {/* Image Upload Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Room Images</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Room Images
+              </h3>
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="images">Upload Images</Label>
-                  <div className="mt-2">
-                    <Input
-                      id="images"
-                      type="file"
-                      multiple
-                      accept=".jpg,.jpeg,.png"
-                      onChange={handleImageUpload}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">Upload multiple images (JPG, PNG only)</p>
-                </div>
+                <Label>Upload Images</Label>
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    const urls = res.map((file) => file.ufsUrl);
+                    setImageUrls((prev) => [...prev, ...urls]);
+                  }}
+                  onUploadError={(error: Error) => {
+                    console.error("Upload Error:", error);
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                  config={{ mode: "auto" }}
+                  appearance={{
+                    container: {
+                      background: "#f8fafc",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "8px",
+                      padding: "16px",
+                    },
+                    button: {
+                      background: "#3b82f6",
+                      color: "#ffffff",
+                      padding: "8px 16px",
+                    },
+                  }}
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Upload up to 5 images (JPG, PNG, max 4MB each)
+                </p>
 
-                {imagePreviews.length > 0 && (
+                {imageUrls.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {imagePreviews.map((preview, index) => (
+                    {imageUrls.map((url, index) => (
                       <div key={index} className="relative group">
                         <Image
-                          src={preview || "/placeholder.svg"}
+                          src={url}
                           alt={`Preview ${index + 1}`}
                           width={150}
                           height={100}
@@ -369,7 +435,11 @@ export function AddRoomModal() {
                           variant="destructive"
                           size="sm"
                           className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => removeImage(index)}
+                          onClick={() => {
+                            setImageUrls((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            );
+                          }}
                         >
                           <X className="h-3 w-3" />
                         </Button>
@@ -382,7 +452,9 @@ export function AddRoomModal() {
 
             {/* Settings Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">Room Settings</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Room Settings
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -390,11 +462,18 @@ export function AddRoomModal() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Available for Booking</FormLabel>
-                        <FormDescription>Enable this room for guest bookings</FormDescription>
+                        <FormLabel className="text-base">
+                          Available for Booking
+                        </FormLabel>
+                        <FormDescription>
+                          Enable this room for guest bookings
+                        </FormDescription>
                       </div>
                       <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -406,11 +485,18 @@ export function AddRoomModal() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Featured Room</FormLabel>
-                        <FormDescription>Highlight this room in featured listings</FormDescription>
+                        <FormLabel className="text-base">
+                          Featured Room
+                        </FormLabel>
+                        <FormDescription>
+                          Highlight this room in featured listings
+                        </FormDescription>
                       </div>
                       <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -422,11 +508,13 @@ export function AddRoomModal() {
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
               </Button>
-              <Button type="submit">Add Room</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Adding..." : "Add Room"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
