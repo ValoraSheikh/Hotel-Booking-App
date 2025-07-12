@@ -2,11 +2,13 @@ import BookingForm from "@/components/sections/BookingForm";
 import dbConnect from "@/lib/db";
 import Room from "@/models/Room.model";
 
-export default async function BookingPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function BookingPage({ params }: PageProps) {
   await dbConnect();
   const { id } = await params;
   const room = await Room.findById(id).lean();
