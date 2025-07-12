@@ -1,6 +1,8 @@
 import BookingForm from "@/components/sections/BookingForm";
 import dbConnect from "@/lib/db";
 import Room from "@/models/Room.model";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 type PageProps = {
   params: {
@@ -8,17 +10,26 @@ type PageProps = {
   };
 };
 
+export const generateMetadata = async ({ params }: PageProps): Promise<Metadata> => {
+  return {
+    title: `Book Room ${params.id} | Hotel`,
+  };
+};
+
 export default async function BookingPage({ params }: PageProps) {
   await dbConnect();
-  const { id } = await params;
-  const room = await Room.findById(id).lean();
+  const { id } = params;
 
-  console.log("Here is the room", id);
-  
+  try {
+    const room = await Room.findById(id).lean();
 
-  if (!room) {
-    return <div>Room not found</div>;
+    if (!room) {
+      return notFound(); // better than rendering <div>Room not found</div>
+    }
+
+    return <BookingForm roomId={id} room={JSON.parse(JSON.stringify(room))} />;
+  } catch (error) {
+    console.error("Error fetching room:", error);
+    return notFound(); // fallback in case of DB errors
   }
-
-  return <BookingForm roomId={id} room={JSON.parse(JSON.stringify(room))} />;
 }
