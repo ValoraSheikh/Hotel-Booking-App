@@ -4,6 +4,7 @@ import dbConnect from "@/lib/db";
 import Review from "@/models/Review.model";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
+
 export async function GET() {
   const session = await getServerSession(authOptions);
 
@@ -16,7 +17,7 @@ export async function GET() {
 
     const reviews = await Review.find({})
       .populate("user", "name email")
-      .populate("room", "title") // Or whatever field identifies the room
+      .populate("room", "title")
       .sort({ createdAt: -1 });
 
     return NextResponse.json({ reviews }, { status: 200 });

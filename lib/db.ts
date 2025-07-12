@@ -6,8 +6,6 @@ if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable");
 }
 
-console.log("→ MONGODB_URI:", MONGODB_URI);
-
 // Global is used here to maintain a cached connection across hot reloads in dev
 let cached = global.mongoose as {
   conn: typeof mongoose | null;

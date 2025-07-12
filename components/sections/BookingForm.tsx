@@ -26,7 +26,13 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format, differenceInDays } from "date-fns";
 
-export default function BookingForm({ roomId, room }) {
+type BookingFormProps = {
+  roomId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  room: any;
+};
+
+export default function BookingForm({ roomId, room }: BookingFormProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const [checkIn, setCheckIn] = useState<Date>();
@@ -39,6 +45,7 @@ export default function BookingForm({ roomId, room }) {
 
   const nights = checkIn && checkOut ? differenceInDays(checkOut, checkIn) : 0;
   const totalPrice = nights * room.price;
+  console.log("Room ID:", roomId);
 
   // Validation
   const validateForm = () => {
@@ -70,6 +77,10 @@ export default function BookingForm({ roomId, room }) {
     setIsSubmitting(true);
     setSubmitError("");
 
+    if (!checkOut || !checkIn) {
+      return alert("Check-out date is required.");
+    }
+
     const bookingData = {
       phoneNo: parseInt(phoneNumber, 10),
       room: room._id,
@@ -97,6 +108,7 @@ export default function BookingForm({ roomId, room }) {
 
       // success!
       router.push("/bookings");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Booking POST error:", error);
       setSubmitError(error.message || "Internal Server Error");
@@ -272,7 +284,10 @@ export default function BookingForm({ roomId, room }) {
                             selected={checkOut}
                             onSelect={setCheckOut}
                             disabled={(date) =>
-                              date < new Date() || (checkIn && date <= checkIn)
+                              Boolean(
+                                date < new Date() ||
+                                  (checkIn && date <= checkIn)
+                              )
                             }
                             initialFocus
                           />

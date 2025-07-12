@@ -4,9 +4,9 @@ import dbConnect from "@/lib/db";
 import Booking from "@/models/Booking.model";
 import Room from "@/models/Room.model";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { RateLimiterMemory } from "rate-limiter-flexible";
+// import { RateLimiterMemory } from "rate-limiter-flexible";
 import User from "@/models/User.model";
-import mongoose from "mongoose";;
+// import mongoose from "mongoose";;
 
 // export const bookingRateLimiter = new RateLimiterMemory({
 //   points: 5, // 5 bookings
