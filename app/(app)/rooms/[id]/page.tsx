@@ -55,8 +55,6 @@ export default function HotelRoomDetails({
 }: {
   params: { id: string };
 }) {
-
-  
   const { id } = use(params);
 
   const [room, setRoom] = useState<IRoom>();
@@ -275,20 +273,27 @@ export default function HotelRoomDetails({
               </CardContent>
             </Card>
 
-
-
-                        <Card>
+            <Card>
               <CardContent className="p-6">
-                <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">Amenities</h2>
+                <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">
+                  Amenities
+                </h2>
 
                 {Object.entries(amenities).map(([category, items]) => (
                   <div key={category} className="mb-6 last:mb-0">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3 capitalize">{category}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 capitalize">
+                      {category}
+                    </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                       {items.map((amenity, index) => (
-                        <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div
+                          key={index}
+                          className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                        >
                           <amenity.icon className="w-5 h-5 text-gray-600" />
-                          <span className="text-sm text-gray-700">{amenity.name}</span>
+                          <span className="text-sm text-gray-700">
+                            {amenity.name}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -377,8 +382,9 @@ export default function HotelRoomDetails({
 
                     {room.isAvailable ? (
                       <Button className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700">
-                        <Link href={`/rooms/${room._id}/booking`}>Book Now</Link>
-
+                        <Link href={`/rooms/${room._id}/booking`}>
+                          Book Now
+                        </Link>
                       </Button>
                     ) : (
                       <Button
@@ -398,7 +404,7 @@ export default function HotelRoomDetails({
             </div>
           </div>
 
-          <RoomDetailComponent />
+          <RoomDetailComponent roomId={room._id} />
         </div>
       </div>
     </div>

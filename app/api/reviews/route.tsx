@@ -6,6 +6,7 @@ import Review from "@/models/Review.model";
 import Room from "@/models/Room.model";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import { updateRoomAverageRating } from "@/lib/updateRoomRating";
+import User from "@/models/User.model";
 
 const rateLimiter = new RateLimiterMemory({
   points: 5, // 5 requests
@@ -15,12 +16,14 @@ const rateLimiter = new RateLimiterMemory({
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user?.id) {
+  // Step 1: Ensure session is valid and user has email
+  if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    await rateLimiter.consume(session.user.id); // Rate limit by user ID
+    // Step 2: Rate limit by user email or IP
+    await rateLimiter.consume(session.user.email); // safer than using ID directly
   } catch {
     return NextResponse.json(
       { error: "Too many review attempts. Please try again later." },
@@ -31,6 +34,7 @@ export async function POST(req: NextRequest) {
   try {
     await dbConnect();
 
+    // Step 3: Get request payload
     const body = await req.json();
     const { room, rating, comment } = body;
 
@@ -48,15 +52,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Step 4: Find room
     const roomExists = await Room.findById(room);
     if (!roomExists) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
-    // ✅ Prevent duplicate review by same user for same room
+    // Step 5: Find user from email
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Step 6: Check if user has already reviewed the room
     const alreadyReviewed = await Review.findOne({
       room,
-      user: session.user.id,
+      user: user._id,
     });
 
     if (alreadyReviewed) {
@@ -66,13 +77,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Step 7: Create the review
     const review = await Review.create({
-      user: session.user.id,
+      user: user._id,
       room,
       rating,
       comment,
     });
 
+    // Optional: update room rating
     await updateRoomAverageRating(room);
 
     return NextResponse.json(
@@ -87,6 +100,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 export async function GET(req: NextRequest) {
   try {

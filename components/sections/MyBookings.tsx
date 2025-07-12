@@ -130,9 +130,9 @@ function BookingCard({ booking }: { booking: Booking }) {
 
         <CardFooter className="pt-0">
           <div className="flex gap-2 w-full">
-            <Button variant="outline" className="flex-1 bg-transparent">
+            <Link href={`/rooms/${booking.room._id}`} variant="outline" className="flex-1 bg-transparent">
               View Details
-            </Button>
+            </Link>
             {canCancel && (
               <Button variant="destructive" className="flex-1">
                 Cancel Booking
