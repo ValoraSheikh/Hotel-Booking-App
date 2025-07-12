@@ -10,6 +10,13 @@ import {
   ChevronRight,
   Heart,
   Share2,
+  Wifi,
+  Bath,
+  Wind,
+  Car,
+  Tv,
+  Coffee,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,11 +25,38 @@ import Link from "next/link";
 import RoomDetailComponent from "@/components/sections/room-detail";
 import { IRoom } from "@/models/Room.model";
 
+const amenities = {
+  basics: [
+    { icon: Wifi, name: "Free Wi-Fi" },
+    { icon: Bath, name: "Ensuite Bathroom" },
+    { icon: Wind, name: "Hair Dryer" },
+    { icon: Car, name: "Free Parking" },
+  ],
+  entertainment: [
+    { icon: Tv, name: "Smart TV" },
+    { icon: Wifi, name: "Netflix" },
+    { icon: Tv, name: "YouTube" },
+  ],
+  comfort: [
+    { icon: Wind, name: "Air Conditioning" },
+    { icon: Coffee, name: "Mini Fridge" },
+    { icon: Bath, name: "Premium Towels" },
+    { icon: Bed, name: "Premium Bedding" },
+  ],
+  safety: [
+    { icon: Shield, name: "Smoke Detector" },
+    { icon: Shield, name: "Safe Box" },
+    { icon: Shield, name: "24/7 Security" },
+  ],
+};
+
 export default function HotelRoomDetails({
   params,
 }: {
   params: { id: string };
 }) {
+
+  
   const { id } = use(params);
 
   const [room, setRoom] = useState<IRoom>();
@@ -238,6 +272,28 @@ export default function HotelRoomDetails({
                     </span>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+
+
+
+                        <Card>
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">Amenities</h2>
+
+                {Object.entries(amenities).map(([category, items]) => (
+                  <div key={category} className="mb-6 last:mb-0">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 capitalize">{category}</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {items.map((amenity, index) => (
+                        <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                          <amenity.icon className="w-5 h-5 text-gray-600" />
+                          <span className="text-sm text-gray-700">{amenity.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </div>

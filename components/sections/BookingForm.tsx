@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 import { CalendarDays, Star, Users, Phone, Shield, Clock } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -26,6 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { format, differenceInDays } from "date-fns";
 
 export default function BookingForm({ roomId, room }) {
+  const router = useRouter();
   const { data: session } = useSession();
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
@@ -94,7 +96,7 @@ export default function BookingForm({ roomId, room }) {
       }
 
       // success!
-      alert("Booking successful!");
+      router.push("/bookings");
     } catch (error: any) {
       console.error("Booking POST error:", error);
       setSubmitError(error.message || "Internal Server Error");
