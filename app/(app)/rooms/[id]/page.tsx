@@ -321,7 +321,8 @@ export default function HotelRoomDetails({
 
                     {room.isAvailable ? (
                       <Button className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700">
-                        <Link href="/booking">Book Now</Link>
+                        <Link href={`/rooms/${room._id}/booking`}>Book Now</Link>
+
                       </Button>
                     ) : (
                       <Button
