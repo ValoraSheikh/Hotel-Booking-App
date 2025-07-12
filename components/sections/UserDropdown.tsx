@@ -27,8 +27,6 @@ export default function UserDropdown() {
 
   if (status !== "authenticated") return null;
 
-  console.log(session);
-
   const user = session.user;
 
   return (

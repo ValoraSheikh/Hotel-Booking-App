@@ -6,6 +6,7 @@ import Room from "@/models/Room.model";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import User from "@/models/User.model";
+import mongoose from "mongoose";;
 
 // export const bookingRateLimiter = new RateLimiterMemory({
 //   points: 5, // 5 bookings
@@ -56,11 +57,9 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session?.user?.id) {
+  if (!session || !session.user?.email) {
     return NextResponse.json(
-      {
-        error: "Unauthorized access",
-      },
+      { error: "Unauthorized access" },
       { status: 401 }
     );
   }
@@ -68,9 +67,20 @@ export async function GET() {
   try {
     await dbConnect();
 
-    const bookings = await Booking.find({ user: session.user.id })
-      .populate("room") // Populate room details
-      .sort({ createdAt: -1 }); // Sort recent first
+    // Lookup MongoDB user using session email
+    const user = await User.findOne({ email: session.user.email });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    // Fetch bookings linked to the MongoDB _id
+    const bookings = await Booking.find({ user: user._id })
+      .populate("room")
+      .sort({ createdAt: -1 });
 
     return NextResponse.json({ bookings }, { status: 200 });
   } catch (error) {

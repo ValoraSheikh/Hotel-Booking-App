@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Search, Star, Trash2, Filter, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -22,39 +22,95 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
+// Mock data for reviews
+const mockReviews = [
+  {
+    id: "1",
+    roomId: "R001",
+    userName: "John Doe",
+    roomTitle: "Deluxe Ocean View Suite",
+    rating: 5,
+    comment:
+      "Absolutely amazing stay! The view was breathtaking and the service was exceptional. Would definitely recommend to anyone looking for a luxury experience.",
+    createdDate: "2024-01-15",
+  },
+  {
+    id: "2",
+    roomId: "R002",
+    userName: "Sarah Johnson",
+    roomTitle: "Standard City Room",
+    rating: 3,
+    comment: "Room was clean but quite small. Staff was friendly though.",
+    createdDate: "2024-01-14",
+  },
+  {
+    id: "3",
+    roomId: "R003",
+    userName: "Mike Wilson",
+    roomTitle: "Executive Business Suite",
+    rating: 4,
+    comment:
+      "Great for business trips. Good workspace and fast WiFi. Only complaint is the air conditioning was a bit noisy at night.",
+    createdDate: "2024-01-13",
+  },
+  {
+    id: "4",
+    roomId: "R001",
+    userName: "Emily Chen",
+    roomTitle: "Deluxe Ocean View Suite",
+    rating: 5,
+    comment: "Perfect honeymoon suite! Romantic atmosphere and stunning sunset views.",
+    createdDate: "2024-01-12",
+  },
+  {
+    id: "5",
+    roomId: "R004",
+    userName: "David Brown",
+    roomTitle: "Family Room",
+    rating: 2,
+    comment:
+      "Room was outdated and had some maintenance issues. The bathroom faucet was leaking and the carpet looked worn out. Not worth the price we paid.",
+    createdDate: "2024-01-11",
+  },
+  {
+    id: "6",
+    roomId: "R005",
+    userName: "Lisa Anderson",
+    roomTitle: "Premium Garden View",
+    rating: 4,
+    comment: "Lovely garden view and comfortable bed. Breakfast was excellent.",
+    createdDate: "2024-01-10",
+  },
+  {
+    id: "7",
+    roomId: "R002",
+    userName: "Robert Taylor",
+    roomTitle: "Standard City Room",
+    rating: 3,
+    comment: "Average room for the price. Location is convenient for downtown activities.",
+    createdDate: "2024-01-09",
+  },
+  {
+    id: "8",
+    roomId: "R006",
+    userName: "Jennifer Martinez",
+    roomTitle: "Luxury Penthouse",
+    rating: 5,
+    comment:
+      "Incredible penthouse with amazing amenities. The private terrace was the highlight of our stay. Exceptional service from start to finish.",
+    createdDate: "2024-01-08",
+  },
+]
+
 export default function ReviewsManagement() {
-  // State declarations
-  const [reviews, setReviews] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [reviews, setReviews] = useState(mockReviews)
   const [searchTerm, setSearchTerm] = useState("")
   const [ratingFilter, setRatingFilter] = useState("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [reviewToDelete, setReviewToDelete] = useState(null)
+  const [reviewToDelete, setReviewToDelete] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const itemsPerPage = rowsPerPage
-
-  // Fetch reviews from API when component mounts
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        setIsLoading(true)
-        const response = await fetch('/api/admin/review')
-        if (!response.ok) {
-          throw new Error('Failed to fetch reviews')
-        }
-        const data = await response.json()
-        setReviews(data)
-      } catch (err) {
-        console.error('Error fetching reviews:', err)
-        setError('Failed to load reviews. Please try again later.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchReviews()
-  }, [])
+  const itemsPerPage = rowsPerPage // Replace the hardcoded itemsPerPage = 5
 
   // Filter reviews based on search and rating
   const filteredReviews = reviews.filter((review) => {
@@ -74,8 +130,7 @@ export default function ReviewsManagement() {
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedReviews = filteredReviews.slice(startIndex, startIndex + itemsPerPage)
 
-  // Delete handler
-  const handleDeleteReview = (reviewId) => {
+  const handleDeleteReview = (reviewId: string) => {
     setReviewToDelete(reviewId)
     setDeleteDialogOpen(true)
   }
@@ -88,37 +143,21 @@ export default function ReviewsManagement() {
     }
   }
 
-  // Utility functions
-  const renderStars = (rating) => {
+  const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star key={i} className={`h-4 w-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
     ))
   }
 
-  const truncateComment = (comment, maxLength = 50) => {
+  const truncateComment = (comment: string, maxLength = 50) => {
     if (comment.length <= maxLength) return comment
     return comment.substring(0, maxLength) + "..."
   }
 
-  const getRatingBadgeColor = (rating) => {
+  const getRatingBadgeColor = (rating: number) => {
     if (rating >= 4) return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
     if (rating >= 3) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
     return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-  }
-
-  // Calculate stats for cards
-  const totalReviews = isLoading ? 'Loading...' : reviews.length
-  const averageRating = isLoading
-    ? 'Loading...'
-    : reviews.length > 0
-    ? (reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1)
-    : 'N/A'
-  const fiveStarReviews = isLoading ? 'Loading...' : reviews.filter((review) => review.rating === 5).length
-  const lowRatings = isLoading ? 'Loading...' : reviews.filter((review) => review.rating <= 2).length
-
-  // Render error state
-  if (error) {
-    return <div className="text-center p-6 text-red-600">{error}</div>
   }
 
   return (
@@ -134,7 +173,7 @@ export default function ReviewsManagement() {
                 <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{totalReviews}</div>
+                <div className="text-2xl font-bold">{reviews.length}</div>
               </CardContent>
             </Card>
             <Card>
@@ -142,7 +181,9 @@ export default function ReviewsManagement() {
                 <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{averageRating}</div>
+                <div className="text-2xl font-bold">
+                  {(reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length).toFixed(1)}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -150,7 +191,7 @@ export default function ReviewsManagement() {
                 <CardTitle className="text-sm font-medium">5-Star Reviews</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{fiveStarReviews}</div>
+                <div className="text-2xl font-bold">{reviews.filter((review) => review.rating === 5).length}</div>
               </CardContent>
             </Card>
             <Card>
@@ -158,7 +199,7 @@ export default function ReviewsManagement() {
                 <CardTitle className="text-sm font-medium">Low Ratings</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{lowRatings}</div>
+                <div className="text-2xl font-bold">{reviews.filter((review) => review.rating <= 2).length}</div>
               </CardContent>
             </Card>
           </div>
@@ -177,7 +218,7 @@ export default function ReviewsManagement() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2 bg-transparent">
-                  <Filter className="h-4 w- "“ />
+                  <Filter className="h-4 w-4" />
                   Rating: {ratingFilter === "all" ? "All" : `${ratingFilter} Stars`}
                 </Button>
               </DropdownMenuTrigger>
@@ -201,7 +242,7 @@ export default function ReviewsManagement() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[80px]">Room ID</TableHead>
-                    <TableHead className="min-w-[120px]">User Name</ErrorTableHead>
+                    <TableHead className="min-w-[120px]">User Name</TableHead>
                     <TableHead className="min-w-[150px]">Room Title</TableHead>
                     <TableHead className="w-[120px]">Rating</TableHead>
                     <TableHead className="min-w-[200px]">Comment</TableHead>
@@ -210,75 +251,59 @@ export default function ReviewsManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-4">
-                        <div className="flex justify-center items-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                  {paginatedReviews.map((review) => (
+                    <TableRow key={review.id}>
+                      <TableCell className="font-mono text-sm">
+                        <Badge variant="outline">{review.roomId}</Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">{review.userName}</TableCell>
+                      <TableCell>{review.roomTitle}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex">{renderStars(review.rating)}</div>
+                          <Badge className={getRatingBadgeColor(review.rating)}>{review.rating}</Badge>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ) : filteredReviews.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
-                        {reviews.length === 0 ? 'No reviews available.' : 'No reviews match the current filters.'}
+                      <TableCell>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="cursor-help">{truncateComment(review.comment)}</span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>{review.comment}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(review.createdDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteReview(review.id)}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete Review
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ) : (
-                    paginatedReviews.map((review) => (
-                      <TableRow key={review.id}>
-                        <TableCell className="font-mono text-sm">
-                          <Badge variant="outline">{review.roomId}</Badge>
-                        </TableCell>
-                        <TableCell className="font-medium">{review.userName}</TableCell>
-                        <TableCell>{review.roomTitle}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="flex">{renderStars(review.rating)}</div>
-                            <Badge className={getRatingBadgeColor(review.rating)}>{review.rating}</Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span className="cursor-help">{truncateComment(review.comment)}</span>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <p>{review.comment}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {new Date(review.createdDate).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteReview(review.id)}
-                                className="text-red-600 focus:text-red-600"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete Review
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                  ))}
                 </TableBody>
               </Table>
             </div>
           </CardContent>
         </Card>
 
-        {/* Pagination */}
+        {/* Material UI Style Pagination */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t pt-4">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -287,7 +312,7 @@ export default function ReviewsManagement() {
                 value={rowsPerPage.toString()}
                 onValueChange={(value) => {
                   setRowsPerPage(Number(value))
-                  setCurrentPage(1)
+                  setCurrentPage(1) // Reset to first page when changing rows per page
                 }}
               >
                 <SelectTrigger className="w-[70px] h-8">
@@ -340,7 +365,7 @@ export default function ReviewsManagement() {
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
-            Kar<AlertDialogHeader>
+            <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete the review and remove it from the system.
