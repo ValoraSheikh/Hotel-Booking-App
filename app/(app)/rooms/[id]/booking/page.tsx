@@ -1,23 +1,22 @@
+// app/(app)/rooms/[id]/booking/page.tsx
+
 import BookingForm from "@/components/sections/BookingForm";
 import dbConnect from "@/lib/db";
 import Room from "@/models/Room.model";
 import { notFound } from "next/navigation";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
+type Props = {
+  params: { id: string };
 };
 
-export default async function BookingPage({ params }: PageProps) {
+export default async function BookingPage({ params }: Props) {
   await dbConnect();
 
-  const { id } = await params;
-  const room = await Room.findById(id).lean();
+  const room = await Room.findById(params.id).lean();
 
-  if (!room) {
-    return notFound();
-  }
+  if (!room) return notFound();
 
-  return <BookingForm roomId={id} room={JSON.parse(JSON.stringify(room))} />;
+  return (
+    <BookingForm roomId={params.id} room={JSON.parse(JSON.stringify(room))} />
+  );
 }
