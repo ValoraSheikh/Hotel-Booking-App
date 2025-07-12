@@ -12,7 +12,7 @@ type PageProps = {
 export default async function BookingPage({ params }: PageProps) {
   await dbConnect();
 
-  const { id } = params;
+  const { id } = await params;
   const room = await Room.findById(id).lean();
 
   if (!room) {
