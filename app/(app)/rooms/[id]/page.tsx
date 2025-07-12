@@ -50,12 +50,15 @@ const amenities = {
   ],
 };
 
-export default function HotelRoomDetails({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = use(params);
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default function HotelRoomDetails({ params }: PageProps) {
+  const { id } = params; // ✅ This is correct
+
 
   const [room, setRoom] = useState<IRoom>();
   const [loading, setLoading] = useState(true);
@@ -76,7 +79,8 @@ export default function HotelRoomDetails({
         }
         const data = await response.json();
         setRoom(data);
-      } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
