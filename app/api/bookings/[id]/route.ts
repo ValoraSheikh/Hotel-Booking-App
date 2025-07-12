@@ -4,9 +4,15 @@ import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
 import Booking from "@/models/Booking.model";
 
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: PageProps
 ) {
   const { id } = await params;
 
@@ -32,14 +38,14 @@ export async function GET(
     return NextResponse.json({ booking }, { status: 200 });
   } catch (error) {
     console.error("Error fetching booking:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH({ params }: PageProps) {
   const { id } = await params;
 
   const session = await getServerSession(authOptions);
@@ -63,15 +69,24 @@ export async function PATCH(
 
     // Prevent cancelling if already cancelled or completed
     if (booking.status === "cancelled" || booking.status === "completed") {
-      return NextResponse.json({ error: `Booking already ${booking.status}` }, { status: 400 });
+      return NextResponse.json(
+        { error: `Booking already ${booking.status}` },
+        { status: 400 }
+      );
     }
 
     booking.status = "cancelled";
     await booking.save();
 
-    return NextResponse.json({ message: "Booking cancelled", booking }, { status: 200 });
+    return NextResponse.json(
+      { message: "Booking cancelled", booking },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error cancelling booking:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

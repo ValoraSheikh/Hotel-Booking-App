@@ -5,10 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export async function GET(req: NextRequest, { params }: PageProps) {
   try {
     const { id } = await params;
 
@@ -44,10 +47,7 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } } // ✅ fixed destructure
-) {
+export async function DELETE(request: NextRequest, { params }: PageProps) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -81,10 +81,7 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: PageProps) {
   try {
     const { id } = await params;
 

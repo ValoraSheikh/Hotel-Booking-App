@@ -5,9 +5,15 @@ import dbConnect from "@/lib/db";
 import Review from "@/models/Review.model";
 import { updateRoomAverageRating } from "@/lib/updateRoomRating";
 
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: PageProps
 ) {
   const { id } = await params;
   const session = await getServerSession(authOptions);

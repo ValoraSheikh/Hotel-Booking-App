@@ -5,10 +5,13 @@ import dbConnect from "@/lib/db";
 import Review from "@/models/Review.model";
 import { updateRoomAverageRating } from "@/lib/updateRoomRating";
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export async function DELETE({ params }: PageProps) {
   const { id } = await params;
 
   const session = await getServerSession(authOptions);
@@ -48,10 +51,7 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, { params }: PageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {

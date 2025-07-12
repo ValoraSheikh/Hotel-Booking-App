@@ -5,10 +5,13 @@ import Booking from "@/models/Booking.model";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import mongoose from "mongoose";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export async function GET(req: NextRequest, { params }: PageProps) {
   const { id } = await params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -42,10 +45,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, { params }: PageProps) {
   const { id } = await params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -94,10 +94,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, { params }: PageProps) {
   const { id } = await params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
