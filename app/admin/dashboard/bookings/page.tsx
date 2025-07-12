@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format } from "date-fns"
 import { Search, Filter, Eye, X, MoreHorizontal, Calendar, Users, Phone, Bed, DollarSign } from "lucide-react"
 
@@ -24,75 +24,23 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-// Mock data for bookings
-const mockBookings = [
-  {
-    id: "1",
-    user: { name: "John Doe", email: "john.doe@example.com" },
-    phoneNo: "+1234567890",
-    room: { title: "Deluxe Ocean View Suite" },
-    guests: 2,
-    checkIn: new Date("2024-01-15"),
-    checkOut: new Date("2024-01-18"),
-    totalPrice: 450,
-    status: "booked",
-  },
-  {
-    id: "2",
-    user: { name: "Sarah Johnson", email: "sarah.johnson@example.com" },
-    phoneNo: "+1987654321",
-    room: { title: "Standard Double Room" },
-    guests: 1,
-    checkIn: new Date("2024-01-10"),
-    checkOut: new Date("2024-01-12"),
-    totalPrice: 200,
-    status: "completed",
-  },
-  {
-    id: "3",
-    user: { name: "Michael Brown", email: "michael.brown@example.com" },
-    phoneNo: "+1122334455",
-    room: { title: "Presidential Suite with Balcony" },
-    guests: 4,
-    checkIn: new Date("2024-01-20"),
-    checkOut: new Date("2024-01-25"),
-    totalPrice: 1200,
-    status: "cancelled",
-  },
-  {
-    id: "4",
-    user: { name: "Emily Davis", email: "emily.davis@example.com" },
-    phoneNo: "+1555666777",
-    room: { title: "Family Room" },
-    guests: 3,
-    checkIn: new Date("2024-01-22"),
-    checkOut: new Date("2024-01-24"),
-    totalPrice: 300,
-    status: "booked",
-  },
-  {
-    id: "5",
-    user: { name: "David Wilson", email: "david.wilson@example.com" },
-    phoneNo: "+1888999000",
-    room: { title: "Executive Suite" },
-    guests: 2,
-    checkIn: new Date("2024-01-08"),
-    checkOut: new Date("2024-01-11"),
-    totalPrice: 600,
-    status: "completed",
-  },
-  {
-    id: "6",
-    user: { name: "Lisa Anderson", email: "lisa.anderson@example.com" },
-    phoneNo: "+1777888999",
-    room: { title: "Standard Single Room" },
-    guests: 1,
-    checkIn: new Date("2024-01-25"),
-    checkOut: new Date("2024-01-27"),
-    totalPrice: 150,
-    status: "booked",
-  },
-]
+interface Booking {
+  _id: string;
+  user: {
+    name: string;
+    email: string;
+  };
+  phoneNo: string;
+  room: {
+    title: string;
+    price: number;
+  };
+  guests: number;
+  checkIn: string; // ISO date string
+  checkOut: string; // ISO date string
+  totalPrice: number;
+  status: string;
+}
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -108,13 +56,50 @@ const getStatusBadge = (status: string) => {
 }
 
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState<Booking[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [bookingToCancel, setBookingToCancel] = useState<string | null>(null)
+
+  // Fetch bookings from API
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch('/api/admin/booking')
+        
+        // Check for HTML response
+        const contentType = response.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text()
+          throw new Error(`Unexpected response type: ${contentType}. Response: ${text.slice(0, 100)}`)
+        }
+        
+        const data = await response.json()
+        
+        if (!response.ok) {
+          throw new Error(data.error || `Request failed with status ${response.status}`)
+        }
+        
+        setBookings(data.bookings)
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching bookings:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load bookings. Please try again later.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBookings()
+  }, [])
 
   // Filter bookings based on search and status
-  const filteredBookings = mockBookings.filter((booking) => {
+  const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
       booking.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -136,14 +121,60 @@ export default function BookingsPage() {
     setCurrentPage(1)
   }
 
-  const handleCancelBooking = (bookingId: string) => {
-    // Handle booking cancellation logic here
-    console.log("Cancelling booking:", bookingId)
+  const handleCancelBooking = async (bookingId: string) => {
+    try {
+      const response = await fetch(`/api/admin/booking/${bookingId}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel booking')
+      }
+
+      // Update local state to reflect cancellation
+      setBookings(bookings.map(booking => 
+        booking._id === bookingId ? { ...booking, status: 'cancelled' } : booking
+      ))
+    } catch (error) {
+      console.error('Cancel booking error:', error)
+      setError('Failed to cancel booking. Please try again.')
+    } finally {
+      setCancelDialogOpen(false)
+      setBookingToCancel(null)
+    }
   }
 
   const handleViewBooking = (bookingId: string) => {
     // Handle view booking logic here
     console.log("Viewing booking:", bookingId)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading bookings...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <div className="bg-red-100 text-red-700 p-6 rounded-md max-w-md">
+          <p className="font-medium">Error loading bookings</p>
+          <p className="mt-2">{error}</p>
+          <Button 
+            className="mt-4"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -218,26 +249,32 @@ export default function BookingsPage() {
                         </TableHeader>
                         <TableBody>
                           {paginatedBookings.length === 0 ? (
-                            <TableCell colSpan={9} className="text-center py-8 sm:py-12">
-                              <div className="flex flex-col items-center space-y-3 px-4">
-                                <div className="text-sm sm:text-base text-muted-foreground">No bookings found.</div>
-                                {searchTerm || statusFilter !== "all" ? (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                      setSearchTerm("")
-                                      setStatusFilter("all")
-                                    }}
-                                  >
-                                    Clear filters
-                                  </Button>
-                                ) : null}
-                              </div>
-                            </TableCell>
+                            <TableRow>
+                              <TableCell colSpan={9} className="text-center py-8 sm:py-12">
+                                <div className="flex flex-col items-center space-y-3 px-4">
+                                  <div className="text-sm sm:text-base text-muted-foreground">
+                                    {searchTerm || statusFilter !== "all" 
+                                      ? "No bookings match your search criteria" 
+                                      : "No bookings found"}
+                                  </div>
+                                  {(searchTerm || statusFilter !== "all") && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        setSearchTerm("")
+                                        setStatusFilter("all")
+                                      }}
+                                    >
+                                      Clear filters
+                                    </Button>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
                           ) : (
                             paginatedBookings.map((booking) => (
-                              <TableRow key={booking.id} className="hover:bg-muted/50">
+                              <TableRow key={booking._id} className="hover:bg-muted/50">
                                 <TableCell className="py-2 sm:py-3">
                                   <div className="space-y-1">
                                     <div className="font-medium text-sm truncate max-w-[160px]">
@@ -284,7 +321,7 @@ export default function BookingsPage() {
                                   <div className="flex items-center space-x-1">
                                     <Calendar className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                                     <span className="text-xs whitespace-nowrap">
-                                      {format(booking.checkIn, "MMM dd")}
+                                      {format(new Date(booking.checkIn), "MMM dd")}
                                     </span>
                                   </div>
                                 </TableCell>
@@ -292,14 +329,14 @@ export default function BookingsPage() {
                                   <div className="flex items-center space-x-1">
                                     <Calendar className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                                     <span className="text-xs whitespace-nowrap">
-                                      {format(booking.checkOut, "MMM dd")}
+                                      {format(new Date(booking.checkOut), "MMM dd")}
                                     </span>
                                   </div>
                                 </TableCell>
                                 <TableCell className="py-2 sm:py-3 text-right">
                                   <div className="flex items-center justify-end space-x-1">
                                     <DollarSign className="h-3 w-3 text-muted-foreground" />
-                                    <span className="text-xs font-medium">{booking.totalPrice}</span>
+                                    <span className="text-xs font-medium">${booking.totalPrice}</span>
                                   </div>
                                 </TableCell>
                                 <TableCell className="py-2 sm:py-3">{getStatusBadge(booking.status)}</TableCell>
@@ -312,37 +349,21 @@ export default function BookingsPage() {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                      <DropdownMenuItem onClick={() => handleViewBooking(booking.id)}>
+                                      <DropdownMenuItem onClick={() => handleViewBooking(booking._id)}>
                                         <Eye className="mr-2 h-4 w-4" />
                                         View Details
                                       </DropdownMenuItem>
                                       {booking.status === "booked" && (
-                                        <AlertDialog>
-                                          <AlertDialogTrigger asChild>
-                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                              <X className="mr-2 h-4 w-4" />
-                                              Cancel Booking
-                                            </DropdownMenuItem>
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
-                                              <AlertDialogDescription>
-                                                Are you sure you want to cancel this booking for{" "}
-                                                <strong>{booking.user.name}</strong>? This action cannot be undone.
-                                              </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                              <AlertDialogAction
-                                                onClick={() => handleCancelBooking(booking.id)}
-                                                className="bg-red-600 hover:bg-red-700"
-                                              >
-                                                Cancel Booking
-                                              </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
+                                        <DropdownMenuItem 
+                                          onSelect={(e) => {
+                                            e.preventDefault()
+                                            setBookingToCancel(booking._id)
+                                            setCancelDialogOpen(true)
+                                          }}
+                                        >
+                                          <X className="mr-2 h-4 w-4" />
+                                          Cancel Booking
+                                        </DropdownMenuItem>
                                       )}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
@@ -395,7 +416,7 @@ export default function BookingsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                          disabled={currentPage === totalPages}
+                          disabled={currentPage === totalPages || totalPages === 0}
                           className="h-8 px-3"
                         >
                           Next
@@ -408,6 +429,35 @@ export default function BookingsPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Cancel Booking Confirmation Dialog */}
+        <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+              <AlertDialogDescription>
+                {bookingToCancel && (
+                  <>
+                    Are you sure you want to cancel this booking for{" "}
+                    <strong>
+                      {bookings.find(b => b._id === bookingToCancel)?.user.name || "this user"}
+                    </strong>?
+                  </>
+                )}
+                This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => bookingToCancel && handleCancelBooking(bookingToCancel)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Cancel Booking
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </TooltipProvider>
   )

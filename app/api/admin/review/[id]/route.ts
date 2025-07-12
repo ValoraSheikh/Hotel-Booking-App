@@ -9,6 +9,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "admin") {
@@ -18,7 +19,7 @@ export async function DELETE(
   try {
     await dbConnect();
 
-    const review = await Review.findById(params.id);
+    const review = await Review.findById(id);
 
     if (!review) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
@@ -35,6 +36,9 @@ export async function DELETE(
     );
   } catch (error) {
     console.error("Admin DELETE review error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
