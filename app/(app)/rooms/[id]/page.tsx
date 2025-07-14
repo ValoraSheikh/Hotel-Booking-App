@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect} from "react";
+import { useState, useEffect, use } from "react";
 import {
   Star,
   Users,
@@ -51,12 +51,13 @@ const amenities = {
 };
 
 type PageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export default function HotelRoomDetails({ params }: PageProps) {
+export default function HotelRoomDetails(props: PageProps) {
+  const params = use(props.params);
   const { id } = params; // ✅ This is correct
 
 

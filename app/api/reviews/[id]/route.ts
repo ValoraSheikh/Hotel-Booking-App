@@ -6,9 +6,9 @@ import Review from "@/models/Review.model";
 import { updateRoomAverageRating } from "@/lib/updateRoomRating";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function DELETE({ params }: PageProps) {
@@ -51,7 +51,8 @@ export async function DELETE({ params }: PageProps) {
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: PageProps) {
+export async function PATCH(req: NextRequest, props: PageProps) {
+  const params = await props.params;
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.id) {
