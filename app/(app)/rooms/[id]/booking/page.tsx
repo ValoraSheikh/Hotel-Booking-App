@@ -4,7 +4,7 @@ import Room from "@/models/Room.model";
 import { notFound } from "next/navigation";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function BookingPage({ params }: Props) {
@@ -13,7 +13,6 @@ export default async function BookingPage({ params }: Props) {
   await dbConnect();
 
   const room = await Room.findById(id).lean();
-
   if (!room) return notFound();
 
   return <BookingForm roomId={id} room={JSON.parse(JSON.stringify(room))} />;
