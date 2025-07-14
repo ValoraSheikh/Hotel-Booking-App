@@ -9,7 +9,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function DELETE({ params }: PageProps) {
+export async function DELETE(request: NextRequest, { params }: PageProps) {
   const { id } = await params;
 
   const session = await getServerSession(authOptions);

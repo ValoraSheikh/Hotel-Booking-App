@@ -43,7 +43,7 @@ export async function GET(
   }
 }
 
-export async function PATCH({ params }: PageProps) {
+export async function PATCH(request: NextRequest, { params }: PageProps) {
   const { id } = await params;
 
   const session = await getServerSession(authOptions);

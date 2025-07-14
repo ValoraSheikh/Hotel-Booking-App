@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
@@ -8,7 +8,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function PATCH(req: Request, { params }: PageProps) {
+export async function PATCH(req: NextRequest, { params }: PageProps) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
@@ -33,7 +33,7 @@ export async function PATCH(req: Request, { params }: PageProps) {
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_req: Request, { params }: PageProps) {
+export async function DELETE(request: NextRequest, { params }: PageProps) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });

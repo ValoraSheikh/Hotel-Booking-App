@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
 import Contact from "@/models/ContactUs.model";
@@ -8,7 +8,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function DELETE({ params }: PageProps) {
+export async function DELETE(request: NextRequest, { params }: PageProps) {
   try {
     const session = await getServerSession(authOptions);
 
