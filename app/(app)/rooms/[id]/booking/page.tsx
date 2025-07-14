@@ -3,11 +3,11 @@ import dbConnect from "@/lib/db";
 import Room from "@/models/Room.model";
 import { notFound } from "next/navigation";
 
-type Props = {
+interface PageProps {
   params: Promise<{ id: string }>;
-};
+}
 
-export default async function BookingPage({ params }: Props) {
+export default async function BookingPage({ params }: PageProps) {
   const { id } = await params;
 
   await dbConnect();
