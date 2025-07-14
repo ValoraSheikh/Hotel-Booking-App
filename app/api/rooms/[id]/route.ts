@@ -5,11 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 export async function GET(req: NextRequest, { params }: PageProps) {
   try {

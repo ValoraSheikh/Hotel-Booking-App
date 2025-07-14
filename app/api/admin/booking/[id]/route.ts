@@ -5,11 +5,9 @@ import Booking from "@/models/Booking.model";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import mongoose from "mongoose";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 export async function GET(req: NextRequest, { params }: PageProps) {
   const { id } = await params;

@@ -4,11 +4,9 @@ import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
 import Booking from "@/models/Booking.model";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 export async function GET(
   req: NextRequest,

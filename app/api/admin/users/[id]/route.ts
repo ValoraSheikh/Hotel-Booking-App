@@ -4,11 +4,9 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
 import User from "@/models/User.model";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 export async function PATCH(req: Request, { params }: PageProps) {
   const session = await getServerSession(authOptions);

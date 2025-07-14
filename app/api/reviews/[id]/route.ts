@@ -5,11 +5,9 @@ import dbConnect from "@/lib/db";
 import Review from "@/models/Review.model";
 import { updateRoomAverageRating } from "@/lib/updateRoomRating";
 
-type PageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
 export async function DELETE({ params }: PageProps) {
   const { id } = await params;
