@@ -3,10 +3,16 @@
 import RoomCard from "@/components/sections/RoomCard";
 import { useEffect, useState } from "react";
 
+interface Room{
+  _id: string
+  name: string;
+  isAvailable: boolean;
+}
+
 const RoomsPage = () => {
-  const [rooms, setRooms] = useState([]); // Initialize rooms as an empty array
+  const [rooms, setRooms] = useState<Room[]>([]); // Initialize rooms as an empty array
   const [isLoading, setIsLoading] = useState(true); // Track loading state
-  const [error, setError] = useState(null); // Track errors
+  const [error, setError] = useState<string | null>(null); // Track errors
 
   useEffect(() => {
     const fetchRooms = async () => {

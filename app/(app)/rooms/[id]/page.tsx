@@ -409,7 +409,7 @@ export default function HotelRoomDetails(props: PageProps) {
             </div>
           </div>
 
-          <RoomDetailComponent roomId={room._id} />
+          <RoomDetailComponent roomId={room._id.toString()} />
         </div>
       </div>
     </div>

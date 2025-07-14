@@ -1,6 +1,7 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, Types, model, models } from "mongoose";
 
 export interface IRoom {
+  _id: Types.ObjectId;
   title: string;
   description: string;
   price: number;
