@@ -1,5 +1,3 @@
-// app/(app)/rooms/[id]/booking/page.tsx
-
 import BookingForm from "@/components/sections/BookingForm";
 import dbConnect from "@/lib/db";
 import Room from "@/models/Room.model";
@@ -10,13 +8,13 @@ type Props = {
 };
 
 export default async function BookingPage({ params }: Props) {
+  const { id } = await params;
+
   await dbConnect();
 
-  const room = await Room.findById(params.id).lean();
+  const room = await Room.findById(id).lean();
 
   if (!room) return notFound();
 
-  return (
-    <BookingForm roomId={params.id} room={JSON.parse(JSON.stringify(room))} />
-  );
+  return <BookingForm roomId={id} room={JSON.parse(JSON.stringify(room))} />;
 }
