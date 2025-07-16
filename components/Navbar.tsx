@@ -116,38 +116,6 @@ export default function Header() {
             </li>
             <div className="bg-gray-200 w-full h-[1px]"></div>
             <li>
-              <span className="block text-sm font-medium text-gray-800">
-                Pages
-              </span>
-              <ul className="ml-4 mt-2 space-y-2 text-sm text-[#5A4D48]">
-                <li>
-                  <a
-                    href="/room-details"
-                    className="block hover:text-[#dfa974]"
-                  >
-                    Room Details
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="block hover:text-[#dfa974]">
-                    Deluxe Room
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="block hover:text-[#dfa974]">
-                    Family Room
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="block hover:text-[#dfa974]">
-                    Premium Room
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <div className="bg-gray-200 w-full h-[1px]"></div>
-            <li>
               <Link href="/blogs" onClick={() => setMobileMenuOpen(false)}>
                 News
               </Link>

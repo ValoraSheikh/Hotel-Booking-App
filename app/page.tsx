@@ -31,13 +31,13 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <>
+    <div className=" overflow-x-hidden">
       <Hero />
       <AboutUs />
       <Services />
       <Room />
       <Testimonials />
       <Blog />
-    </>
+    </div>
   );
 }
