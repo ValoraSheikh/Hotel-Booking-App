@@ -52,9 +52,9 @@ const roomSchema = z.object({
   beds: z.string().min(1, "Bed configuration is required"),
   roomNumber: z.string().min(1, "Room number is required"),
   services: z.array(z.string()).min(1, "At least one service must be selected"),
-  isAvailable: z.boolean().optional().default(true),
-  featured: z.boolean().optional().default(false),
-  rating: z.number().min(0).max(5).optional().default(0),
+  isAvailable: z.boolean(), // Required, no default
+  featured: z.boolean(),    // Required, no default
+  rating: z.number().min(0).max(5), // Required, no default
 });
 
 type RoomFormData = z.infer<typeof roomSchema>;
