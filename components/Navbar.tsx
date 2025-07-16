@@ -196,12 +196,12 @@ export default function Header() {
                   <Twitter />
                 </a>
               </div>
-              <a
-                href="#"
+              <Link
+                href="/rooms"
                 className="bk-btn px-4 py-2 text-xs uppercase bg-[#dfa974] text-white font-bold tracking-wider"
               >
                 Booking Now
-              </a>
+              </Link>
               <div className="language-option relative flex items-center gap-2 cursor-pointer">
                 {session?.user && <UserDropdown />}
               </div>
