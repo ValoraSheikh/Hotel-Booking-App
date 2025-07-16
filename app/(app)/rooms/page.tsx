@@ -4,9 +4,14 @@ import RoomCard from "@/components/sections/RoomCard";
 import { useEffect, useState } from "react";
 
 interface Room{
-  _id: string
-  name: string;
-  isAvailable: boolean;
+  _id: string;
+  title: string;
+  rating: number;
+  images: string[];
+  services: string[];
+  reviewsCount: number;
+  price: number;
+  hasFreeCancellation: boolean;
 }
 
 const RoomsPage = () => {

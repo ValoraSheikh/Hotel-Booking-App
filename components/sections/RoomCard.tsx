@@ -2,8 +2,19 @@
 import Image from "next/image";
 import Link from "next/link";
 
+interface Room {
+  _id: string;
+  title: string;
+  rating: number;
+  images: string[];
+  services: string[];
+  reviewsCount: number;
+  price: number;
+  hasFreeCancellation: boolean;
+}
+
 // RoomCard component to render individual room details
-const RoomCard = ({ room }) => {
+const RoomCard = ({ room }: { room: Room }) => {
   return (
     <div className="relative mx-auto w-full max-w-lg rounded-sm border border-zinc-200 bg-white ring-4 ring-zinc-300/25">
       <div className="relative overflow-hidden rounded-sm bg-white">
