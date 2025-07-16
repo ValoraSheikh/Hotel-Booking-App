@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏨 Hotel Booking App
 
-## Getting Started
+> Book your stay with ease. Built with Next.js + MongoDB.
 
-First, run the development server:
+A full-stack hotel reservation system where users can browse rooms, make bookings, and admins can manage rooms, bookings, and reviews — all from a powerful dashboard.
+
+I built this project to level up my Next.js App Router and MongoDB skills and become a better full stack developer.
+
+---
+
+## 🔗 Live Demo
+
+- 🌐 User App: [hotel-booking-app-woad.vercel.app](https://hotel-booking-app-woad.vercel.app/)
+
+---
+
+## 📸 Screenshot
+
+![App Screenshot](https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+
+---
+
+## 🚀 Features
+
+- 🏨 Room Listing & Filtering
+- 📆 Real-Time Availability & Booking
+- 🔐 User Authentication (NextAuth)
+- 🧑 Admin Dashboard (Bookings, Rooms, Reviews)
+- 🖼️ Upload room images (UploadThing)
+- 📩 Contact Form
+- ✨ Toast notifications
+- ✅ Zod form validation
+- 🧠 Zustand for state management
+- 🧹 Clean, scalable folder structure
+
+---
+
+## 🧰 Tech Stack
+
+| Tech        | Used For             |
+|-------------|----------------------|
+| **Next.js (App Router)** | Frontend & Backend |
+| **TailwindCSS** | Styling |
+| **MongoDB** | Database |
+| **NextAuth.js** | Auth |
+| **UploadThing** | File Upload |
+| **Zustand** | State Management |
+| **Zod + React Hook Form** | Form Validation |
+| **Vercel** | Deployment |
+
+---
+
+## 🗂️ Folder Structure
+
+<details>
+  <summary>Click to expand</summary>
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+/app
+  ├── (app)/
+  │   ├── about-us/
+  │   ├── blogs/
+  │   ├── booking/
+  │   ├── bookings/
+  │   ├── contact-us/
+  │   ├── rooms/
+  │   ├── sign-in/
+  │   ├── sign-up/
+  ├── admin/
+  │   ├── dashboard/
+  │   │   ├── bookings/
+  │   │   ├── reviews/
+  │   │   ├── rooms/
+  ├── api/
+  │   ├── admin/
+  │   ├── auth/
+  │   ├── bookings/
+  │   ├── contact/
+  │   ├── reviews/
+  │   ├── rooms/
+  │   ├── uploadthing/
+  ├── components/
+  ├── lib/
+  ├── models/
+  ├── utils/
+  ├── public/
+
+```
+</details>
+
+## ⚙️ Environment Variables
+
+To run locally, create `.env.local` and add:
+
+```env
+MONGODB_URI=mongodb+srv://<your-password>@cluster.eesbbxv.mongodb.net/
+NEXTAUTH_SECRET=your-next-auth-secret
+NEXTAUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+UPLOADTHING_TOKEN=your-token
+UPLOADTHING_SECRET=your-secret
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```
+git clone https://github.com/ValoraSheikh/Hotel-Booking-App.git
+cd hotel-booking-app
+npm install
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 💡 What I Learned
+- 🧑‍💻 Implemented admin panel logic with full CRUD operations
+- 🏗️ Learned scalable folder structuring for large apps
+- 📤 Gained experience in UploadThing for file uploads
+- 🧬 Applied client/server component strategy for performance
+- 🔁 Built reusable server actions and custom hooks
+- 🔍 Improved code readability and reusability
 
-## Learn More
+## 🛠️ Future Improvements
+- 💳 Add payment integration (Stripe or Razorpay)
+- ❌ Booking cancellation flow
+- 🧍 Profile page with edit options
+- ⭐ Reviews with star ratings
+- ⏳ Loading states and skeleton UI
+- ✉️ Notifications via email (Next.js + Resend)
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
+This project is licensed under the MIT License — you're free to use, modify, and distribute.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👨‍💻 Author
+**Aman Sheikh**  
+📫 **Email**: haarishsheikh04@gmail.com  
+🌐 **Portfolio**: [Portfolio](https://my-3-d-portfolio-kappa.vercel.app/)  
+🐦 **X / Twitter**: [Twitter](https://x.com/AmanSheikhKhan)  
+💼 **LinkedIn**: [LinkedIn](https://www.linkedin.com/in/valorant-aman-238a73335/)  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+💬 If you liked this project or want to collaborate, feel free to reach out or connect!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
