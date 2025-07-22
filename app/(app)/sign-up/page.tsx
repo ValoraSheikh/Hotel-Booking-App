@@ -75,7 +75,7 @@ export default function SignUpPage() {
       {/* Left Section - Hidden on mobile */}
       <div className="relative flex-1 hidden lg:block h-screen">
         <Image
-          src=" https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src="https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Signup"
           fill
           className="object-cover"
