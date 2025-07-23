@@ -31,6 +31,7 @@ const useRooms = () => {
               : "/placeholder.svg?height=80&width=120",
         }));
         setRooms(mapped);
+        
       })
       .catch((err) => {
         console.error("Error fetching rooms:", err);
@@ -40,6 +41,7 @@ const useRooms = () => {
       .finally(() => {
         setIsLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { rooms, setRooms, isLoading, error };

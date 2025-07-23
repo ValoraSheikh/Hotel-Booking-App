@@ -23,7 +23,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import RoomDetailComponent from "@/components/sections/room-detail";
-import { IRoom } from "@/models/Room.model";
+// import { IRoom } from "@/models/Room.model";
+import useRoomDetail from "@/hooks/useRoomDetail";
 
 const amenities = {
   basics: [
@@ -60,64 +61,42 @@ export default function HotelRoomDetails(props: PageProps) {
   const params = use(props.params);
   const { id } = params;
 
-  const [room, setRoom] = useState<IRoom>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [checkIn, setCheckIn] = useState("2024-01-15");
   const [checkOut, setCheckOut] = useState("2024-01-18");
   const [guests, setGuests] = useState(2);
+  const { roomDetail, isLoading, error } = useRoomDetail(id);
 
-  // Fetch room data when ID is available
+  if (!isLoading) {
+    console.log("In room detail", roomDetail);
+  }
+
   useEffect(() => {
-    const fetchRoom = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/rooms/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch room data");
-        }
-        const data = await response.json();
-        setRoom(data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchRoom();
-    }
-  }, [id]);
-
-  // Reset image index when room data changes
-  useEffect(() => {
-    if (room) {
+    if (roomDetail) {
       setCurrentImageIndex(0);
     }
-  }, [room]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle loading, error, and no-data states
-  if (loading) {
+  if (isLoading) {
     return <div className="text-center py-10">Loading...</div>;
   }
   if (error) {
     return <div className="text-center py-10 text-red-600">Error: {error}</div>;
   }
-  if (!room) {
+  if (!roomDetail) {
     return <div className="text-center py-10">Room not found</div>;
   }
 
   // Image navigation functions
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % room.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % roomDetail.images.length);
   };
 
   const prevImage = () => {
     setCurrentImageIndex(
-      (prev) => (prev - 1 + room.images.length) % room.images.length
+      (prev) => (prev - 1 + roomDetail.images.length) % roomDetail.images.length
     );
   };
 
@@ -129,7 +108,7 @@ export default function HotelRoomDetails(props: PageProps) {
   };
 
   const nights = calculateNights();
-  const totalBeforeTax = room.price * nights;
+  const totalBeforeTax = roomDetail.price * nights;
   const taxes = Math.round(totalBeforeTax * 0.12);
   const totalPrice = totalBeforeTax + taxes;
 
@@ -140,7 +119,9 @@ export default function HotelRoomDetails(props: PageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="text-sm text-gray-600">
             <span>Home</span> / <span>Rooms</span> /{" "}
-            <span className="text-gray-900 font-medium">{room.title}</span>
+            <span className="text-gray-900 font-medium">
+              {roomDetail.title}
+            </span>
           </nav>
         </div>
       </div>
@@ -156,8 +137,10 @@ export default function HotelRoomDetails(props: PageProps) {
                 <Image
                   height={500}
                   width={500}
-                  src={room.images[currentImageIndex] || "/placeholder.svg"}
-                  alt={room.title}
+                  src={
+                    roomDetail.images[currentImageIndex] || "/placeholder.svg"
+                  }
+                  alt={roomDetail.title}
                   className="w-full h-full object-cover"
                 />
                 <button
@@ -173,7 +156,7 @@ export default function HotelRoomDetails(props: PageProps) {
                   <ChevronRight className="w-5 h-5" />
                 </button>
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                  {room.images.map((_, index) => (
+                  {roomDetail.images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -197,11 +180,11 @@ export default function HotelRoomDetails(props: PageProps) {
               <div className="p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                   <h1 className="text-3xl font-light text-gray-900 font-serif mb-2 sm:mb-0">
-                    {room.title}
+                    {roomDetail.title}
                   </h1>
                   <div className="text-right">
                     <div className="text-3xl font-medium text-gray-900">
-                      ₹{room.price}
+                      ₹{roomDetail.price}
                       <span className="text-lg font-normal text-gray-600">
                         /night
                       </span>
@@ -215,14 +198,14 @@ export default function HotelRoomDetails(props: PageProps) {
                       <Star
                         key={i}
                         className={`w-5 h-5 ${
-                          i < Math.floor(room.rating)
+                          i < Math.floor(roomDetail.rating)
                             ? "text-yellow-400 fill-current"
                             : "text-gray-300"
                         }`}
                       />
                     ))}
                     <span className="ml-2 text-gray-600">
-                      {room?.rating?.toFixed(1) ?? "N/A"} rating
+                      {roomDetail?.rating?.toFixed(1) ?? "N/A"} rating
                     </span>
                   </div>
                 </div>
@@ -236,35 +219,35 @@ export default function HotelRoomDetails(props: PageProps) {
                   Room Overview
                 </h2>
                 <p className="text-gray-600 mb-6 leading-relaxed">
-                  {room.description}
+                  {roomDetail.description}
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
                   <div className="text-center p-4 bg-gray-50 rounded-sm">
                     <Maximize className="w-6 h-6 mx-auto mb-2 text-gray-600" />
                     <div className="font-semibold text-gray-900">
-                      {room.size} m²
+                      {roomDetail.size} m²
                     </div>
                     <div className="text-sm text-gray-600">Room Size</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-sm">
                     <Users className="w-6 h-6 mx-auto mb-2 text-gray-600" />
                     <div className="font-semibold text-gray-900">
-                      Max {room.capacity}
+                      Max {roomDetail.capacity}
                     </div>
                     <div className="text-sm text-gray-600">Guests</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-sm">
                     <Bed className="w-6 h-6 mx-auto mb-2 text-gray-600" />
                     <div className="font-semibold text-gray-900">
-                      {room.beds}
+                      {roomDetail.beds}
                     </div>
                     <div className="text-sm text-gray-600">Bed Type</div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {room.services.map((service, index) => (
+                  {roomDetail.services.map((service, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
@@ -313,7 +296,7 @@ export default function HotelRoomDetails(props: PageProps) {
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <div className="text-3xl font-bold text-gray-900">
-                      ${room.price}
+                      ${roomDetail.price}
                       <span className="text-lg font-normal text-gray-600">
                         /night
                       </span>
@@ -358,7 +341,7 @@ export default function HotelRoomDetails(props: PageProps) {
                         onChange={(e) => setGuests(Number(e.target.value))}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        {[...Array(room.capacity)].map((_, i) => (
+                        {[...Array(roomDetail.capacity)].map((_, i) => (
                           <option key={i} value={i + 1}>
                             {i + 1} Guest{i + 1 > 1 ? "s" : ""}
                           </option>
@@ -369,7 +352,7 @@ export default function HotelRoomDetails(props: PageProps) {
                     <div className="border-t pt-4 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>
-                          ${room.price} × {nights} nights
+                          ${roomDetail.price} × {nights} nights
                         </span>
                         <span>${totalBeforeTax}</span>
                       </div>
@@ -383,8 +366,8 @@ export default function HotelRoomDetails(props: PageProps) {
                       </div>
                     </div>
 
-                    {room.isAvailable ? (
-                      <Link href={`/rooms/${room._id}/booking`}>
+                    {roomDetail.isAvailable ? (
+                      <Link href={`/rooms/${roomDetail._id}/booking`}>
                         <Button className="w-full h-12 text-lg font-semibold bg-[#dfa974] hover:bg-[#dfaa74d8] rounded-sm cursor-pointer">
                           Book Now
                         </Button>
@@ -407,7 +390,7 @@ export default function HotelRoomDetails(props: PageProps) {
             </div>
           </div>
 
-          <RoomDetailComponent roomId={room._id.toString()} />
+          <RoomDetailComponent roomId={roomDetail._id.toString()} />
         </div>
       </div>
     </div>

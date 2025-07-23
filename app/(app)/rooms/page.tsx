@@ -5,8 +5,6 @@ import useRooms from "@/hooks/useRooms";
 
 const RoomsPage = () => {
   const { rooms, isLoading, error } = useRooms();
-
-  console.log("here are the rooms", rooms);
   
   if (isLoading) {
     return <div className="text-center py-10">Loading rooms...</div>;
