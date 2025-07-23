@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { format } from "date-fns"
-import { Search, Filter, Eye, X, MoreHorizontal, Calendar, Users, Phone, Bed, DollarSign } from "lucide-react"
+import { Search, Filter, Eye, X, MoreHorizontal, Calendar, Users, Phone, Bed, IndianRupee } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -22,24 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-
-interface Booking {
-  _id: string;
-  user: {
-    name: string;
-    email: string;
-  };
-  phoneNo: string;
-  room: {
-    title: string;
-    price: number;
-  };
-  guests: number;
-  checkIn: string; // ISO date string
-  checkOut: string; // ISO date string
-  totalPrice: number;
-  status: string;
-}
+import useBookings from "@/hooks/useBookings"
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -55,9 +38,6 @@ const getStatusBadge = (status: string) => {
 }
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
@@ -65,37 +45,8 @@ export default function BookingsPage() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null)
 
-  // Fetch bookings from API
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await fetch('/api/admin/booking')
-        
-        // Check for HTML response
-        const contentType = response.headers.get('content-type')
-        if (!contentType || !contentType.includes('application/json')) {
-          const text = await response.text()
-          throw new Error(`Unexpected response type: ${contentType}. Response: ${text.slice(0, 100)}`)
-        }
-        
-        const data = await response.json()
-        
-        if (!response.ok) {
-          throw new Error(data.error || `Request failed with status ${response.status}`)
-        }
-        
-        setBookings(data.bookings)
-        setError(null)
-      } catch (err) {
-        console.error('Error fetching bookings:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load bookings. Please try again later.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
+  const { bookings, isLoading, error,setBookings } = useBookings();
 
-    fetchBookings()
-  }, [])
 
   // Filter bookings based on search and status
   const filteredBookings = bookings.filter((booking) => {
@@ -129,14 +80,14 @@ export default function BookingsPage() {
       if (!response.ok) {
         throw new Error('Failed to cancel booking')
       }
+      
 
       // Update local state to reflect cancellation
-      setBookings(bookings.map(booking => 
+      setBookings(bookings.map(booking =>
         booking._id === bookingId ? { ...booking, status: 'cancelled' } : booking
       ))
     } catch (error) {
       console.error('Cancel booking error:', error)
-      setError('Failed to cancel booking. Please try again.')
     } finally {
       setCancelDialogOpen(false)
       setBookingToCancel(null)
@@ -334,8 +285,8 @@ export default function BookingsPage() {
                                 </TableCell>
                                 <TableCell className="py-2 sm:py-3 text-right">
                                   <div className="flex items-center justify-end space-x-1">
-                                    <DollarSign className="h-3 w-3 text-muted-foreground" />
-                                    <span className="text-xs font-medium">${booking.totalPrice}</span>
+                                    <IndianRupee className="h-3 w-3 text-muted-foreground" />
+                                    <span className="text-xs font-medium">₹{booking.totalPrice}</span>
                                   </div>
                                 </TableCell>
                                 <TableCell className="py-2 sm:py-3">{getStatusBadge(booking.status)}</TableCell>
