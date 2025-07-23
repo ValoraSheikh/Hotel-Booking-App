@@ -2,9 +2,45 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { CalendarDays } from "lucide-react";
+import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
+  const router = useRouter();
   const [current, setCurrent] = useState(0);
+  const [checkIn, setCheckIn] = useState<Date>();
+  const [checkOut, setCheckOut] = useState<Date>();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!checkIn) newErrors.checkIn = "Check-in date is required";
+    if (!checkOut) newErrors.checkOut = "Check-out date is required";
+    if (checkIn && checkOut && checkOut <= checkIn) {
+      newErrors.checkOut = "Check-out must be after check-in date";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    if (!checkOut || !checkIn) {
+      return alert("Check-out date is required.");
+    }
+
+    return router.push('/rooms')
+
+  };
+
   const images = [
     "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1517840901100-8179e982acb7?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -27,6 +63,8 @@ export default function Hero() {
           <Image
             key={index}
             src={img}
+            placeholder="blur"
+            blurDataURL="..."
             alt={`Hero ${index}`}
             fill
             className={`object-cover transition-opacity duration-1000 ease-in-out absolute inset-0 ${
@@ -65,7 +103,7 @@ export default function Hero() {
               <h3 className="text-4xl font-semibold text-[#333] mb-6 playfair-display md:text-center">
                 Booking Your Hotel
               </h3>
-              <form action="#" className="space-y-4">
+              <form action="#" className="space-y-4" onClick={handleSubmit}>
                 <div>
                   <label
                     htmlFor="date-in"
@@ -74,12 +112,30 @@ export default function Hero() {
                     Check In:
                   </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      id="date-in"
-                      className="w-full px-4 py-2 border border-gray-200 rounded"
-                    />
-                    <i className="icon_calendar absolute right-3 top-2.5 text-gray-400" />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`w-full justify-start text-left font-normal h-12 ${
+                            errors.checkIn ? "border-red-500" : ""
+                          }`}
+                        >
+                          <CalendarDays className="mr-2 h-4 w-4" />
+                          {checkIn
+                            ? format(checkIn, "MMM dd, yyyy")
+                            : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={checkIn}
+                          onSelect={setCheckIn}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
 
@@ -91,12 +147,34 @@ export default function Hero() {
                     Check Out:
                   </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      id="date-out"
-                      className="w-full px-4 py-2 border border-gray-200 rounded"
-                    />
-                    <i className="icon_calendar absolute right-3 top-2.5 text-gray-500" />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`w-full justify-start text-left font-normal h-12 ${
+                            errors.checkOut ? "border-red-500" : ""
+                          }`}
+                        >
+                          <CalendarDays className="mr-2 h-4 w-4" />
+                          {checkOut
+                            ? format(checkOut, "MMM dd, yyyy")
+                            : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={checkOut}
+                          onSelect={setCheckOut}
+                          disabled={(date) =>
+                            Boolean(
+                              date < new Date() || (checkIn && date <= checkIn)
+                            )
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
 
@@ -113,6 +191,8 @@ export default function Hero() {
                   >
                     <option>2 Adults</option>
                     <option>3 Adults</option>
+                    <option>4 Adults</option>
+                    <option>5+ Adults</option>
                   </select>
                 </div>
 
@@ -129,6 +209,7 @@ export default function Hero() {
                   >
                     <option>1 Room</option>
                     <option>2 Room</option>
+                    <option>3+ Room</option>
                   </select>
                 </div>
 

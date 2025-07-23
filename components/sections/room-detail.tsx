@@ -157,7 +157,7 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
   return (
     <div className="lg:col-span-2 space-y-8">
       {/* Write a Review Section */}
-      <Card>
+      <Card className=" rounded-sm">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">
             Write a Review
@@ -322,7 +322,7 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
       </Card>
 
       {/* Reviews Section */}
-      <Card>
+      <Card className=" rounded-sm">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 font-serif">
@@ -401,7 +401,7 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
       </Card>
 
       {/* FAQ */}
-      <Card>
+      <Card className=" rounded-sm">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">
             Frequently Asked Questions
@@ -436,7 +436,7 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
       </Card>
 
       {/* Related Rooms */}
-      {/* <Card>
+      {/* <Card className=" rounded-sm">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">
             You Might Also Like
@@ -485,12 +485,12 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
       </Card> */}
 
       {/* Location */}
-      <Card>
+      <Card className=" rounded-sm">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">
             Location & Nearby
           </h2>
-          <div className="bg-gray-200 rounded-lg h-64 mb-6 flex items-center justify-center">
+          <div className="bg-gray-200 rounded-sm h-64 mb-6 flex items-center justify-center">
             <div className="text-center text-gray-600">
               <MapPin className="w-12 h-12 mx-auto mb-2" />
               <p>Interactive Map</p>
@@ -534,7 +534,7 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
       </Card>
 
       {/* Support */}
-      <Card>
+      <Card className=" rounded-sm">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 font-serif mb-4">
             Still Have Questions?
@@ -546,21 +546,21 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Button
               variant="outline"
-              className="flex items-center justify-center space-x-2 h-12 bg-transparent"
+              className="flex items-center justify-center space-x-2 h-12 bg-transparent rounded-sm"
             >
               <MessageCircle className="w-5 h-5" />
               <span>WhatsApp</span>
             </Button>
             <Button
               variant="outline"
-              className="flex items-center justify-center space-x-2 h-12 bg-transparent"
+              className="flex items-center justify-center space-x-2 h-12 bg-transparent rounded-sm"
             >
               <MessageCircle className="w-5 h-5" />
               <span>Live Chat</span>
             </Button>
             <Button
               variant="outline"
-              className="flex items-center justify-center space-x-2 h-12 bg-transparent"
+              className="flex items-center justify-center space-x-2 h-12 bg-transparent rounded-sm"
             >
               <Phone className="w-5 h-5" />
               <span>Call Us</span>

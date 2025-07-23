@@ -58,8 +58,7 @@ type PageProps = {
 
 export default function HotelRoomDetails(props: PageProps) {
   const params = use(props.params);
-  const { id } = params; // ✅ This is correct
-
+  const { id } = params;
 
   const [room, setRoom] = useState<IRoom>();
   const [loading, setLoading] = useState(true);
@@ -80,7 +79,7 @@ export default function HotelRoomDetails(props: PageProps) {
         }
         const data = await response.json();
         setRoom(data);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -151,7 +150,7 @@ export default function HotelRoomDetails(props: PageProps) {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Hero Section */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-white rounded-sm shadow-lg overflow-hidden">
               {/* Image Carousel */}
               <div className="relative h-64 sm:h-80 lg:h-96">
                 <Image
@@ -197,12 +196,12 @@ export default function HotelRoomDetails(props: PageProps) {
               {/* Room Info */}
               <div className="p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-                  <h1 className="text-3xl font-bold text-gray-900 font-serif mb-2 sm:mb-0">
+                  <h1 className="text-3xl font-light text-gray-900 font-serif mb-2 sm:mb-0">
                     {room.title}
                   </h1>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-gray-900">
-                      ${room.price}
+                    <div className="text-3xl font-medium text-gray-900">
+                      ₹{room.price}
                       <span className="text-lg font-normal text-gray-600">
                         /night
                       </span>
@@ -223,8 +222,7 @@ export default function HotelRoomDetails(props: PageProps) {
                       />
                     ))}
                     <span className="ml-2 text-gray-600">
-                      {room?.rating?.toFixed(1) ?? "N/A"}
-                      rating
+                      {room?.rating?.toFixed(1) ?? "N/A"} rating
                     </span>
                   </div>
                 </div>
@@ -232,8 +230,8 @@ export default function HotelRoomDetails(props: PageProps) {
             </div>
 
             {/* Room Overview */}
-            <Card>
-              <CardContent className="p-6">
+            <Card className="rounded-sm">
+              <CardContent className="p-6 rounded-sm">
                 <h2 className="text-2xl font-bold text-gray-900 font-serif mb-4">
                   Room Overview
                 </h2>
@@ -242,21 +240,21 @@ export default function HotelRoomDetails(props: PageProps) {
                 </p>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-center p-4 bg-gray-50 rounded-sm">
                     <Maximize className="w-6 h-6 mx-auto mb-2 text-gray-600" />
                     <div className="font-semibold text-gray-900">
                       {room.size} m²
                     </div>
                     <div className="text-sm text-gray-600">Room Size</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-center p-4 bg-gray-50 rounded-sm">
                     <Users className="w-6 h-6 mx-auto mb-2 text-gray-600" />
                     <div className="font-semibold text-gray-900">
                       Max {room.capacity}
                     </div>
                     <div className="text-sm text-gray-600">Guests</div>
                   </div>
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-center p-4 bg-gray-50 rounded-sm">
                     <Bed className="w-6 h-6 mx-auto mb-2 text-gray-600" />
                     <div className="font-semibold text-gray-900">
                       {room.beds}
@@ -278,7 +276,7 @@ export default function HotelRoomDetails(props: PageProps) {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="rounded-sm">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold text-gray-900 font-serif mb-6">
                   Amenities
@@ -311,7 +309,7 @@ export default function HotelRoomDetails(props: PageProps) {
           {/* Booking Widget */}
           <div className="lg:col-span-1">
             <div className="sticky top-6">
-              <Card className="shadow-xl">
+              <Card className="shadow-xl rounded-sm">
                 <CardContent className="p-6">
                   <div className="text-center mb-6">
                     <div className="text-3xl font-bold text-gray-900">
@@ -386,11 +384,11 @@ export default function HotelRoomDetails(props: PageProps) {
                     </div>
 
                     {room.isAvailable ? (
-                      <Button className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700">
-                        <Link href={`/rooms/${room._id}/booking`}>
+                      <Link href={`/rooms/${room._id}/booking`}>
+                        <Button className="w-full h-12 text-lg font-semibold bg-[#dfa974] hover:bg-[#dfaa74d8] rounded-sm cursor-pointer">
                           Book Now
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
                     ) : (
                       <Button
                         disabled

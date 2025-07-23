@@ -8,7 +8,6 @@ import Pagination from "./rooms/Pagination";
 import RoomTable from "./rooms/RoomTable";
 import useRooms from "@/hooks/useRooms";
 
-// Main Dashboard Component
 export default function RoomManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

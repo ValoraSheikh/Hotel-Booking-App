@@ -52,7 +52,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "utfs.io", // optional if you're still using utfs.io links
+        hostname: "utfs.io",
       },
       {
         protocol: 'https',
