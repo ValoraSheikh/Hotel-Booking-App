@@ -60,7 +60,12 @@ export async function PATCH(req: NextRequest, { params }: PageProps) {
     await dbConnect();
 
     const body = await req.json();
-    const { status } = body;
+    console.log("Body", body);
+
+    const { id, status } = body;
+
+    console.log("In admin route", id , status);
+    
 
     const validStatuses = ["booked", "cancelled", "completed"];
     if (!validStatuses.includes(status)) {
@@ -70,17 +75,26 @@ export async function PATCH(req: NextRequest, { params }: PageProps) {
       );
     }
 
-    const booking = await Booking.findById(id);
+    // const booking = await Booking.findById(id);
 
-    if (!booking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    // if (!booking) {
+    //   return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    // }
+
+    // booking.status = status === "booked" ? "cancelled" : "booked";
+    // await booking.save();
+    const updated = await Booking.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    booking.status = status;
-    await booking.save();
-
     return NextResponse.json(
-      { message: "Booking status updated", booking },
+      { message: "Booking status updated", updated },
       { status: 200 }
     );
   } catch (error) {

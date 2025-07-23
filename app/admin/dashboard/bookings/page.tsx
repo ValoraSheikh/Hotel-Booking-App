@@ -45,7 +45,7 @@ export default function BookingsPage() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null)
 
-  const { bookings, isLoading, error,setBookings } = useBookings();
+  const { bookings, isLoading, error, setBookings } = useBookings();
 
 
   // Filter bookings based on search and status
@@ -73,13 +73,34 @@ export default function BookingsPage() {
 
   const handleCancelBooking = async (bookingId: string) => {
     try {
+      let status = bookings.find((b) => b._id === bookingId)?.status
+      console.log('status of cancel booking 👩‍🦰', status);
+
+      if ( status === "booked" ) {
+        status = "cancelled"
+      }
+
+      const data = {
+        id: bookingId,
+        status: status
+      }
+      
       const response = await fetch(`/api/admin/booking/${bookingId}`, {
-        method: 'DELETE'
+        method: 'PATCH',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       })
+
+      console.log(`Here is response ${response.json()}`);
+      console.log(`Here is response ok ${response.ok}`);
+      
 
       if (!response.ok) {
         throw new Error('Failed to cancel booking')
       }
+
+      console.log(`${bookingId} now has status of ${status}`);
+      
       
 
       // Update local state to reflect cancellation
