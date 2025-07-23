@@ -3,18 +3,20 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface Room {
-  _id: string;
+  id: string;
   title: string;
   rating: number;
-  images: string[];
+  image: string;
   services: string[];
-  reviewsCount: number;
+  reviewsCount?: number;
   price: number;
-  hasFreeCancellation: boolean;
+  hasFreeCancellation?: boolean;
 }
 
 // RoomCard component to render individual room details
 const RoomCard = ({ room }: { room: Room }) => {
+  console.log("In room card", room);
+  
   return (
     <div className="relative mx-auto w-full max-w-lg rounded-sm border border-zinc-200 bg-white ring-4 ring-zinc-300/25">
       <div className="relative overflow-hidden rounded-sm bg-white">
@@ -62,7 +64,7 @@ const RoomCard = ({ room }: { room: Room }) => {
           </div>
           {/* Image */}
           <Image
-            src={room.images[0]}
+            src={room.image}
             alt={room.title}
             height={500}
             width={500}
@@ -71,6 +73,7 @@ const RoomCard = ({ room }: { room: Room }) => {
         </div>
         {/* Hotel Details */}
         <div className="p-6">
+          
           {/* Hotel Name and Location */}
           <div className="mb-4">
             <h3 className="mb-1 text-xl font-bold text-zinc-800">{room.title}</h3>
@@ -92,6 +95,7 @@ const RoomCard = ({ room }: { room: Room }) => {
               <span>Jaisalmer</span>
             </div>
           </div>
+
           {/* Amenities */}
           <div className="mb-4">
             <div className="flex flex-wrap gap-1.5">
@@ -102,6 +106,7 @@ const RoomCard = ({ room }: { room: Room }) => {
               ))}
             </div>
           </div>
+
           {/* Reviews */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
@@ -142,18 +147,19 @@ const RoomCard = ({ room }: { room: Room }) => {
             </span>
           </div>
           <hr className="my-4 border-zinc-100" />
+
           {/* Price and Book Button */}
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-zinc-800">${room.price}</span>
+                <span className="text-2xl font-bold text-zinc-800">₹{room.price}</span>
                 <span className="text-sm text-zinc-600">per night</span>
               </div>
               {room.hasFreeCancellation && <p className="text-xs text-emerald-600">Free cancellation</p>}
             </div>
             <div className="flex justify-center mt-6">
               <Link
-                href={`/rooms/${room._id}`}
+                href={`/rooms/${room.id}`}
                 className="text-sm text-black uppercase font-semibold tracking-wider border-b-2 border-[#dfa974] pb-[2px]"
               >
                 More details

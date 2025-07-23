@@ -4,6 +4,7 @@ import { Room } from "@/types";
 const useRooms = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -22,13 +23,18 @@ const useRooms = () => {
           beds: room.beds,
           capacity: room.capacity,
           available: room.isAvailable,
-          rating: 4.5,
-          image: room.images && room.images.length > 0 ? room.images[0] : "/placeholder.svg?height=80&width=120",
+          rating: room.rating,
+          services: room.services,
+          image:
+            room.images && room.images.length > 0
+              ? room.images[0]
+              : "/placeholder.svg?height=80&width=120",
         }));
         setRooms(mapped);
       })
       .catch((err) => {
         console.error("Error fetching rooms:", err);
+        setError(error);
         setRooms([]);
       })
       .finally(() => {
@@ -36,7 +42,7 @@ const useRooms = () => {
       });
   }, []);
 
-  return { rooms, setRooms, isLoading };
+  return { rooms, setRooms, isLoading, error };
 };
 
 export default useRooms;
