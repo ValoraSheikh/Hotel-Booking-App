@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, Star, Trash2, Filter, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -44,26 +44,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import useReviews from "@/hooks/useReviews";
 
-interface Review {
-  _id: string;
-  user: {
-    name: string;
-    email: string;
-  };
-  room: {
-    _id: string;
-    title: string;
-  };
-  rating: number;
-  comment: string;
-  createdAt: string;
-}
 
 export default function ReviewsManagement() {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [ratingFilter, setRatingFilter] = useState("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -72,29 +57,8 @@ export default function ReviewsManagement() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const itemsPerPage = rowsPerPage;
 
-  const fetchReviews = async () => {
-    try {
-      const response = await fetch("/api/admin/review");
-      const data = await response.json();
-      console.log("data", data);
+  const { reviews, error, isLoading, setReviews } = useReviews()
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch review");
-      }
-
-      setReviews(data.reviews);
-    } catch (err) {
-      console.error("Error fetching reviews:", err);
-      setError("Failed to load reviews. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Fetch reviews from API
-  useEffect(() => {
-    fetchReviews();
-  }, []);
 
   console.log("Returning reviews", reviews);
 
