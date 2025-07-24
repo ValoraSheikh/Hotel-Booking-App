@@ -16,7 +16,7 @@ I built this project to level up my Next.js App Router and MongoDB skills and be
 
 ## 📸 Screenshot
 
-![App Screenshot](https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+![App Screenshot](https://res.cloudinary.com/dxlh1tom2/image/upload/v1753094201/Screenshot_283_ataqcf.png)
 
 ---
 
