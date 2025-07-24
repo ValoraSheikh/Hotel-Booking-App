@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-
     const { searchParams } = new URL(req.url);
     const merchantOrderId = searchParams.get("merchantOrderId");
 
@@ -35,10 +34,9 @@ export async function POST(req: NextRequest) {
 
     const status = state === "COMPLETED" ? "success" : "failed";
 
-    
-
     console.log("➡️ Returning status:", status);
-    return NextResponse.json({ status });
+
+    return NextResponse.json({ paymentStatus: status });
   } catch (error) {
     console.error("💥 Status function error:", error);
     return NextResponse.json(

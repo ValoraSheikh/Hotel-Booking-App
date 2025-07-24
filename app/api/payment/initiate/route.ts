@@ -15,7 +15,7 @@ const client = StandardCheckoutClient.getInstance(
   Env.SANDBOX // change this to PRODUCTION for live
 );
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
