@@ -15,6 +15,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Loading from "@/app/(app)/bookings/Loading";
 
 // Interfaces based on IBooking and expected room population
 interface Room {
@@ -228,7 +229,11 @@ export default function MyBookings() {
 
   // Handle different session states
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <Loading/>
+      </>
+    )
   }
 
   if (status === "unauthenticated") {
@@ -236,7 +241,11 @@ export default function MyBookings() {
   }
 
   if (loading) {
-    return <div>Loading bookings...</div>;
+    return (
+      <>
+        <Loading/>
+      </>
+    )
   }
 
   if (error) {
