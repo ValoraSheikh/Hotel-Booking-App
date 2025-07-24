@@ -20,7 +20,7 @@ const RoomCard = ({ room }: { room: Room }) => {
     <div className="relative mx-auto w-full max-w-lg rounded-sm border border-zinc-200 bg-white ring-4 ring-zinc-300/25">
       <div className="relative overflow-hidden rounded-sm bg-white">
         {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
+        <div className="relative overflow-hidden bg-gradient-to-br from-gray-200 to-gray-400">
           {/* Hotel Badge */}
           <div className="absolute top-0 left-0 p-6">
             <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900/50 px-2.5 py-1 text-sm font-medium text-white backdrop-blur-sm">
