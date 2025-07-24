@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
 import { CalendarDays, Star, Users, Phone, Shield, Clock } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -33,7 +32,6 @@ type BookingFormProps = {
 };
 
 export default function BookingForm({ roomId, room }: BookingFormProps) {
-  const router = useRouter();
   const { data: session } = useSession();
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
@@ -106,8 +104,27 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
         throw new Error(data.error || "Booking failed");
       }
 
-      // success!
-      router.push("/bookings");
+      const payRes = await fetch("/api/payment/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          merchantOrderId: data.merchantOrderId,
+          amount: totalPrice * 100,
+          redirectUrl:`${window.location.origin}/check-status?merchantOrderId=${data.merchantOrderId}`
+        })
+      })
+
+      if (!payRes.ok) {
+        throw new Error(data.error || "Payment failed");
+      }
+
+      const payData = await payRes.json();
+
+      const { redirectUrl } = payData;
+
+      window.location.href = redirectUrl;
+
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Booking POST error:", error);

@@ -10,6 +10,8 @@ export interface IBooking {
   totalPrice: number;
   guests: number;
   status: "booked" | "cancelled" | "completed";
+  paymentStatus: "success" | "failed" | "pending"
+  merchantOrderId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,6 +54,15 @@ const bookingSchema = new Schema<IBooking>(
       enum: ["booked", "cancelled", "completed"],
       default: "booked",
     },
+    paymentStatus: {
+      type: String,
+      enum: ['success', 'failed', 'pending'],
+      default: "pending"
+    },
+    merchantOrderId: {
+      type: Number,
+    }
+
   },
   { timestamps: true }
 );

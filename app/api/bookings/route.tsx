@@ -14,43 +14,65 @@ import User from "@/models/User.model";
 // });
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
   try {
-    await dbConnect()
+    await dbConnect();
 
-    const userEmail = session.user.email
-    const userRecord = await User.findOne({ email: userEmail }).select("_id")
+    const userEmail = session.user.email;
+    const userRecord = await User.findOne({ email: userEmail }).select("_id");
     if (!userRecord) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const body = await req.json()
-    const { phoneNo, room, checkIn, checkOut, guests, totalPrice } = body
-    // … your existing validations …
-
-    const roomExists = await Room.findById(room)
-    if (!roomExists) {
-      return NextResponse.json({ error: "Room not found" }, { status: 404 })
-    }
-
-    const newBooking = await Booking.create({
-      user: userRecord._id,     // use the MongoDB ObjectId
+    const body = await req.json();
+    const {
       phoneNo,
       room,
       checkIn,
       checkOut,
       guests,
       totalPrice,
-    })
+    } = body;
 
-    return NextResponse.json({ booking: newBooking }, { status: 201 })
+    if (
+      !phoneNo ||
+      !room ||
+      !checkIn ||
+      !guests ||
+      !totalPrice
+    ) {
+      return NextResponse.json({ error: "Missing fields are required" });
+    }
+
+    const roomExists = await Room.findById(room);
+    if (!roomExists) {
+      return NextResponse.json({ error: "Room not found" }, { status: 404 });
+    }
+
+    const merchantOrderId = Date.now()
+
+    const newBooking = await Booking.create({
+      user: userRecord._id,
+      phoneNo,
+      room,
+      checkIn,
+      checkOut,
+      guests,
+      totalPrice,
+      merchantOrderId,
+    });
+
+    return NextResponse.json({ booking: newBooking }, { status: 201 });
   } catch (err) {
-    console.error("Booking POST error:", err)
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    console.error("Booking POST error:", err);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -58,10 +80,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.email) {
-    return NextResponse.json(
-      { error: "Unauthorized access" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
   try {
@@ -71,10 +90,7 @@ export async function GET() {
     const user = await User.findOne({ email: session.user.email });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Fetch bookings linked to the MongoDB _id
