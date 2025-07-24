@@ -25,6 +25,7 @@ import Link from "next/link";
 import RoomDetailComponent from "@/components/sections/room-detail";
 // import { IRoom } from "@/models/Room.model";
 import useRoomDetail from "@/hooks/useRoomDetail";
+import Loading from "./Loading";
 
 const amenities = {
   basics: [
@@ -80,7 +81,11 @@ export default function HotelRoomDetails(props: PageProps) {
 
   // Handle loading, error, and no-data states
   if (isLoading) {
-    return <div className="text-center py-10">Loading...</div>;
+    return(
+      <>
+        <Loading/>
+      </>
+    )
   }
   if (error) {
     return <div className="text-center py-10 text-red-600">Error: {error}</div>;
