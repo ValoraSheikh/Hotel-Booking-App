@@ -53,8 +53,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 });
     }
 
-    const merchantOrderId = Date.now()
-
     const newBooking = await Booking.create({
       user: userRecord._id,
       phoneNo,
@@ -63,7 +61,6 @@ export async function POST(req: NextRequest) {
       checkOut,
       guests,
       totalPrice,
-      merchantOrderId,
     });
 
     return NextResponse.json({ booking: newBooking }, { status: 201 });

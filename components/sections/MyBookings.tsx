@@ -212,7 +212,6 @@ export default function MyBookings() {
     try {
       setLoading(true);
       const response = await fetch("/api/bookings");
-      console.log("Here is the response", response);
 
       if (!response.ok) {
         throw new Error("Failed to fetch bookings");

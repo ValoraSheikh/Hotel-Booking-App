@@ -98,32 +98,34 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
       });
 
       const data = await response.json();
-      console.log("Booking response:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Booking failed");
       }
 
+    const merchantOrderId = Date.now()
+
+      const paymentData = {
+        merchantOrderId: merchantOrderId,
+        amount: totalPrice * 100,
+        redirectUrl: `http://localhost:3000/check-status?merchantOrderId=${merchantOrderId}`,
+      };
+      
+
       const payRes = await fetch("/api/payment/initiate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          merchantOrderId: data.merchantOrderId,
-          amount: totalPrice * 100,
-          redirectUrl:`${window.location.origin}/check-status?merchantOrderId=${data.merchantOrderId}`
-        })
-      })
+        body: JSON.stringify(paymentData),
+      });
 
       if (!payRes.ok) {
         throw new Error(data.error || "Payment failed");
       }
 
       const payData = await payRes.json();
-
-      const { redirectUrl } = payData;
+      const { redirectUrl } = await payData;
 
       window.location.href = redirectUrl;
-
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

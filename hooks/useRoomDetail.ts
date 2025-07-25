@@ -16,7 +16,6 @@ const useRoomDetail = (id: string) => {
         return res.json();
       })
       .then((room) => {
-        console.log("Logging room", room);
 
         setRoomDetail(room);
       })

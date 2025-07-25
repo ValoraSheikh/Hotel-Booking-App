@@ -15,7 +15,7 @@ const client = StandardCheckoutClient.getInstance(
   Env.SANDBOX // change this to PRODUCTION for live
 );
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     }
 
     const request = StandardCheckoutPayRequest.builder()
-      .merchantOrderId(merchantOrderId)
+      .merchantOrderId(merchantOrderId.toString())
       .amount(amount)
       .redirectUrl(redirectUrl)
       .build();
@@ -47,9 +47,6 @@ export async function GET(req: NextRequest) {
     );
   } catch (err) {
     console.error("Payment initiate POST error:", err);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server error" }, { status: 500 });
   }
 }
