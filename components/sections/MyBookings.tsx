@@ -19,7 +19,7 @@ import Loading from "@/app/(app)/bookings/Loading";
 
 // Interfaces based on IBooking and expected room population
 interface Room {
-  _id: string
+  _id: string;
   title: string;
   images: string;
   location: string;
@@ -69,6 +69,38 @@ function formatDate(dateString: string) {
 function BookingCard({ booking }: { booking: Booking }) {
   const canCancel =
     booking.status === "booked" && new Date(booking.checkIn) > new Date();
+
+  const handleCancelBooking = async (bookingId: string) => {
+    try {
+
+      if (booking.status === "booked") {
+        booking.status = "cancelled";
+      }
+
+      const data = {
+        id: bookingId,
+        status: booking.status,
+      };
+
+      const response = await fetch(`/api/admin/booking/${bookingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      console.log(`Here is response ${response.json()}`);
+      console.log(`Here is response ok ${response.ok}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to cancel booking");
+      }
+
+      console.log(`${bookingId} now has status of ${status}`);
+
+    } catch (error) {
+      console.error("Cancel booking error:", error);
+    }
+  };
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
@@ -160,7 +192,11 @@ function BookingCard({ booking }: { booking: Booking }) {
                 </Button>
               </Link>
               {canCancel && (
-                <Button variant="destructive" className="flex-1">
+                <Button variant="destructive" className="flex-1"
+                onClick={() => {
+                  handleCancelBooking(booking._id)
+                }}
+                >
                   Cancel Booking
                 </Button>
               )}
@@ -230,9 +266,9 @@ export default function MyBookings() {
   if (status === "loading") {
     return (
       <>
-        <Loading/>
+        <Loading />
       </>
-    )
+    );
   }
 
   if (status === "unauthenticated") {
@@ -242,9 +278,9 @@ export default function MyBookings() {
   if (loading) {
     return (
       <>
-        <Loading/>
+        <Loading />
       </>
-    )
+    );
   }
 
   if (error) {
