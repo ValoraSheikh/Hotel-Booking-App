@@ -16,6 +16,8 @@ interface Booking {
   checkOut: string; // ISO date string
   totalPrice: number;
   status: string;
+  paymentStatus: string;
+  merchantOrderId: string;
 }
 
 const useBookings = () => {

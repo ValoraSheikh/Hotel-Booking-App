@@ -43,7 +43,6 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
 
   const nights = checkIn && checkOut ? differenceInDays(checkOut, checkIn) : 0;
   const totalPrice = nights * room.price;
-  console.log("Room ID:", roomId);
 
   // Validation
   const validateForm = () => {
@@ -81,7 +80,7 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
 
     const bookingData = {
       phoneNo: parseInt(phoneNumber, 10),
-      room: room._id,
+      room: roomId,
       checkIn: checkIn.toISOString(),
       checkOut: checkOut.toISOString(),
       guests: parseInt(guests, 10),
@@ -103,14 +102,16 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
         throw new Error(data.error || "Booking failed");
       }
 
-    const merchantOrderId = Date.now()
+      console.log("🎍", data.booking._id);
+      const bookingId = data.booking._id;
+
+      const merchantOrderId = Date.now();
 
       const paymentData = {
         merchantOrderId: merchantOrderId,
         amount: totalPrice * 100,
-        redirectUrl: `http://localhost:3000/check-status?merchantOrderId=${merchantOrderId}`,
+        redirectUrl: `http://localhost:3000/check-status?merchantOrderId=${merchantOrderId}&bookingId=${bookingId}`,
       };
-      
 
       const payRes = await fetch("/api/payment/initiate", {
         method: "POST",

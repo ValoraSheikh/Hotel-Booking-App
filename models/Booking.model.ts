@@ -70,7 +70,7 @@ const bookingSchema = new Schema<IBooking>(
 bookingSchema.index({ user: 1 });
 bookingSchema.index({ room: 1 });
 bookingSchema.index({ status: 1 });
-bookingSchema.index({ checkIn: 1 }); // helpful for availability
+bookingSchema.index({ checkIn: 1 });
 
 const Booking = models?.Booking || model<IBooking>("Booking", bookingSchema);
 export default Booking;

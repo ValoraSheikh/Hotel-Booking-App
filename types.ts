@@ -1,3 +1,4 @@
+
 export interface User {
   _id: string;
   name: string;
@@ -26,4 +27,26 @@ export interface Room {
   rating: number;
   image: string
   available: boolean
+}
+
+export interface Booking {
+  _id: string;
+  user: {
+    name: string;
+    email: string;
+  };
+  phoneNo: string;
+  room: {
+    title: string;
+    price: number;
+  };
+  guests: number;
+  checkIn: string; // ISO date string
+  checkOut: string; // ISO date string
+  totalPrice: number;
+  status: string;
+  paymentStatus: string;
+  merchantOrderId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

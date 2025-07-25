@@ -11,25 +11,30 @@ export default function CheckStatusPage() {
   const [status, setStatus] = useState<Status>("checking");
 
   const merchantOrderId = searchParams.get("merchantOrderId");
+  const bookingId = searchParams.get("bookingId");
+  
 
   useEffect(() => {
-    if (!merchantOrderId) {
+    if (!merchantOrderId || !bookingId) {
       setStatus("not-found");
       return;
     }
 
     const checkStatus = async () => {
       try {
-        const res = await fetch(`/api/payment/status?merchantOrderId=${merchantOrderId}`);
+        const res = await fetch(
+          `/api/payment/status?merchantOrderId=${merchantOrderId}&bookingId=${bookingId}`
+        );
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Unknown error");
 
         const paymentStatus = data.paymentStatus; // assuming 'success' | 'failed' | 'pending'
 
+        console.log("➡️ Returning status:", paymentStatus);
+
         if (paymentStatus === "success") {
           setStatus("success");
-          // optional: redirect after few sec
           setTimeout(() => router.push("/bookings"), 3000);
         } else if (paymentStatus === "failed") {
           setStatus("failed");
@@ -43,7 +48,7 @@ export default function CheckStatusPage() {
     };
 
     checkStatus();
-  }, [merchantOrderId, router]);
+  }, [merchantOrderId, router, bookingId]);
 
   const getStatusMessage = () => {
     switch (status) {

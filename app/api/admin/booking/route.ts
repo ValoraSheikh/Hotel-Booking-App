@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db";
 import Booking from "@/models/Booking.model";
+import "@/models/Room.model"; // ✅ registers the Room schema
+import "@/models/User.model";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -15,7 +17,7 @@ export async function GET() {
     await dbConnect();
 
     const bookings = await Booking.find()
-      .populate("user", "name email") // select name & email only
+      .populate("user", "name email")
       .populate("room", "title price")
       .sort({ createdAt: -1 });
 
@@ -25,5 +27,6 @@ export async function GET() {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
 
 
