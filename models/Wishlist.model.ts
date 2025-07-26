@@ -2,7 +2,7 @@ import { model, models, Schema, Types } from "mongoose";
 
 interface IWishlist {
   user: Types.ObjectId;
-  roomId: Types.ObjectId;
+  rooms: Types.ObjectId;
 }
 
 const wishlistSchema = new Schema(
@@ -12,11 +12,13 @@ const wishlistSchema = new Schema(
       ref: "User",
       required: true,
     },
-    roomId: [{
-      type: Types.ObjectId,
-      ref: "Room",
-      required: true,
-    }],
+    rooms: [
+      {
+        type: Types.ObjectId,
+        ref: "Room",
+        required: true,
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,9 +13,32 @@ interface Room {
   hasFreeCancellation?: boolean;
 }
 
+const saveRoomToWishlist = async (id: any) => {
+  console.log(`I liked this room ${id}`);
+
+  const roomData = {
+    roomId: id
+  };
+
+  console.log('😪', roomData);
+
+  const response = await fetch("/api/wishlist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(roomData),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Booking failed");
+  }
+
+  console.log(data);
+};
+
 // RoomCard component to render individual room details
 const RoomCard = ({ room }: { room: Room }) => {
-  
   return (
     <div className="relative mx-auto w-full max-w-lg rounded-sm border border-zinc-200 bg-white ring-4 ring-zinc-300/25">
       <div className="relative overflow-hidden rounded-sm bg-white">
@@ -42,6 +65,9 @@ const RoomCard = ({ room }: { room: Room }) => {
           {/* Favorite Button */}
           <div className="absolute top-0 right-0 p-6">
             <button
+              onClick={() => {
+                saveRoomToWishlist(room.id);
+              }}
               type="button"
               className="inline-flex size-8 items-center justify-center rounded-full bg-zinc-900/50 text-white backdrop-blur-sm hover:bg-zinc-900 hover:text-red-400"
               aria-label="Favorite"
@@ -72,10 +98,11 @@ const RoomCard = ({ room }: { room: Room }) => {
         </div>
         {/* Hotel Details */}
         <div className="p-6">
-          
           {/* Hotel Name and Location */}
           <div className="mb-4">
-            <h3 className="mb-1 text-xl font-bold text-zinc-800">{room.title}</h3>
+            <h3 className="mb-1 text-xl font-bold text-zinc-800">
+              {room.title}
+            </h3>
             <div className="flex items-center gap-1.5 text-sm text-zinc-600">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +126,10 @@ const RoomCard = ({ room }: { room: Room }) => {
           <div className="mb-4">
             <div className="flex flex-wrap gap-1.5">
               {room.services.map((amenity, index) => (
-                <span key={index} className="rounded-lg bg-zinc-200/50 px-2 py-1 text-xs font-medium text-zinc-700">
+                <span
+                  key={index}
+                  className="rounded-lg bg-zinc-200/50 px-2 py-1 text-xs font-medium text-zinc-700"
+                >
                   {amenity}
                 </span>
               ))}
@@ -121,8 +151,12 @@ const RoomCard = ({ room }: { room: Room }) => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-sm font-medium text-zinc-800">{room.rating}</span>
-              <span className="text-sm text-zinc-600">({room.reviewsCount} reviews)</span>
+              <span className="text-sm font-medium text-zinc-800">
+                {room.rating}
+              </span>
+              <span className="text-sm text-zinc-600">
+                ({room.reviewsCount} reviews)
+              </span>
             </div>
             <span className="inline-flex items-center gap-1 rounded-lg bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700">
               <svg
@@ -142,7 +176,13 @@ const RoomCard = ({ room }: { room: Room }) => {
                 <path d="M4 17v2" />
                 <path d="M5 18H3" />
               </svg>
-              <span>{room.rating >= 4.5 ? "Excellent" : room.rating >= 4.0 ? "Very Good" : "Good"}</span>
+              <span>
+                {room.rating >= 4.5
+                  ? "Excellent"
+                  : room.rating >= 4.0
+                  ? "Very Good"
+                  : "Good"}
+              </span>
             </span>
           </div>
           <hr className="my-4 border-zinc-100" />
@@ -151,10 +191,14 @@ const RoomCard = ({ room }: { room: Room }) => {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-zinc-800">₹{room.price}</span>
+                <span className="text-2xl font-bold text-zinc-800">
+                  ₹{room.price}
+                </span>
                 <span className="text-sm text-zinc-600">per night</span>
               </div>
-              {room.hasFreeCancellation && <p className="text-xs text-emerald-600">Free cancellation</p>}
+              {room.hasFreeCancellation && (
+                <p className="text-xs text-emerald-600">Free cancellation</p>
+              )}
             </div>
             <div className="flex justify-center mt-6">
               <Link

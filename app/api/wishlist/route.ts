@@ -22,9 +22,13 @@ export async function POST(req: NextRequest) {
 
     const { roomId } = body;
 
+    console.log('💩', body);
+    console.log('🐱‍🚀', roomId);
+    
+
     if (!roomId) {
       return NextResponse.json(
-        { error: "Missing userId and roomId is required" },
+        { error: "Missing roomId is required" },
         { status: 400 }
       );
     }
