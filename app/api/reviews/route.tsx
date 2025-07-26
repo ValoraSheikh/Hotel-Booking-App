@@ -85,7 +85,6 @@ export async function POST(req: NextRequest) {
       comment,
     });
 
-    // Optional: update room rating
     await updateRoomAverageRating(room);
 
     return NextResponse.json(

@@ -12,11 +12,11 @@ const wishlistSchema = new Schema(
       ref: "User",
       required: true,
     },
-    roomId: {
+    roomId: [{
       type: Types.ObjectId,
       ref: "Room",
       required: true,
-    },
+    }],
   },
   { timestamps: true }
 );
