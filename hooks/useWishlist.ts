@@ -66,7 +66,7 @@ const useWishlist = () => {
     fetchWishlist();
   }, []);
 
-  return { wishlist, isLoading, error };
+  return { wishlist, isLoading, error, setWishlist };
 };
 
 export default useWishlist;

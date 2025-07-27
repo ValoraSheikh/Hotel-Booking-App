@@ -38,7 +38,6 @@ const RoomTable: React.FC<RoomTableProps> = ({ rooms }) => {
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to delete room");
-      // Note: State update is handled in parent component via context or callback
     } catch (error) {
       console.error("Failed to delete room:", error);
     }

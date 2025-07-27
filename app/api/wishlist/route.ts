@@ -95,3 +95,49 @@ export async function GET() {
     );
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user?.id) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { roomId } = body
+
+    if (!roomId) {
+      return NextResponse.json({ error: "Room not found" }, { status: 404 });
+    }
+
+    const wishlist = await Wishlist.findOne({ user: session.user.id });
+
+    if (!wishlist) {
+      return NextResponse.json(
+        { error: "Wishlist not found" },
+        { status: 404 }
+      );
+    }
+
+    if (wishlist.user.toString() !== session.user.id) {
+      return NextResponse.json({ error: "Probhited" }, { status: 403 });
+    }
+
+    await Wishlist.updateOne(
+      { user: session.user.id },
+      { $pull: { rooms: roomId } }
+    );
+
+    return NextResponse.json(
+      { message: "Wishlist successfully updated" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating wishlist:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
