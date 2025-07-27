@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Wishlist from "@/models/Wishlist.model";
 import User from "@/models/User.model";
+import "@/models/Room.model"
 
 export async function POST(req: NextRequest) {
   try {
@@ -80,6 +81,7 @@ export async function GET() {
     const wishlist = await Wishlist.findOne({ user: user._id })
       .populate("rooms")
       .sort({ createdAt: -1 });
+
 
     return NextResponse.json(
       { wishlist: wishlist?.rooms || [] },
