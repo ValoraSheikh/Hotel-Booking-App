@@ -13,7 +13,7 @@ interface Room {
   hasFreeCancellation?: boolean;
 }
 
-const saveRoomToWishlist = async (id: any) => {
+const saveRoomToWishlist = async (id: string) => {
   console.log(`I liked this room ${id}`);
 
   const roomData = {

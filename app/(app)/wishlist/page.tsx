@@ -1,9 +1,20 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import WishlistCard from "@/components/wishlistCard"
+import Link from "next/link";
+import WishlistCard from "@/components/wishlistCard";
+import useWishlist from "@/hooks/useWishlist";
 
 export default function WishlistPage() {
+  const { error, isLoading, wishlist } = useWishlist();
+
+  if (!isLoading) {
+    console.log("🤧", wishlist);
+  }
+
+  if (error) {
+    console.log("😫", error);
+  }
+
   // Sample wishlist data
   const wishlistItems = [
     {
@@ -48,23 +59,25 @@ export default function WishlistPage() {
       image: "/placeholder.svg?height=200&width=300",
       location: "Rishikesh, India",
     },
-  ]
-
-
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 sm:px-8 py-8">
         {/* Page Heading */}
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">Your Wishlist ❤️</h1>
-          <p className="text-gray-600 text-sm sm:text-base">{wishlistItems.length} saved properties</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
+            Your Wishlist ❤️
+          </h1>
+          <p className="text-gray-600 text-sm sm:text-base">
+            {wishlistItems.length} saved properties
+          </p>
         </div>
 
         {/* Wishlist Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {wishlistItems.map((item) => (
-            <WishlistCard key={item.id} item={item}/>
+          {wishlist.map((item) => (
+            <WishlistCard key={item._id} item={item} />
           ))}
         </div>
 
@@ -72,8 +85,12 @@ export default function WishlistPage() {
         {wishlistItems.length === 0 && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">💔</div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your wishlist is empty</h2>
-            <p className="text-gray-600 mb-6">Start exploring and save your favorite properties</p>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              Your wishlist is empty
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Start exploring and save your favorite properties
+            </p>
             <Link
               href="/search"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
@@ -84,5 +101,5 @@ export default function WishlistPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
