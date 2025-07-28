@@ -1,10 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 import dbConnect from "@/lib/db";
 import Wishlist from "@/models/Wishlist.model";
 import User from "@/models/User.model";
-import "@/models/Room.model"
+import "@/models/Room.model";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,9 +24,8 @@ export async function POST(req: NextRequest) {
 
     const { roomId } = body;
 
-    console.log('💩', body);
-    console.log('🐱‍🚀', roomId);
-    
+    console.log("💩", body);
+    console.log("🐱‍🚀", roomId);
 
     if (!roomId) {
       return NextResponse.json(
@@ -82,7 +82,6 @@ export async function GET() {
       .populate("rooms")
       .sort({ createdAt: -1 });
 
-
     return NextResponse.json(
       { wishlist: wishlist?.rooms || [] },
       { status: 200 }
@@ -99,19 +98,27 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user?.id) {
+  if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
   try {
     const body = await req.json();
-    const { roomId } = body
+    const { roomId } = body;
+
+    console.log("PATCH request body:", body);
 
     if (!roomId) {
-      return NextResponse.json({ error: "Room not found" }, { status: 404 });
+      return NextResponse.json({ error: "Room ID missing" }, { status: 400 });
     }
 
-    const wishlist = await Wishlist.findOne({ user: session.user.id });
+    if (!mongoose.Types.ObjectId.isValid(roomId)) {
+      return NextResponse.json({ error: "Invalid room ID" }, { status: 400 });
+    }
+
+    const user = await User.findOne({ email: session.user.email });
+
+    const wishlist = await Wishlist.findOne({ user: user._id });
 
     if (!wishlist) {
       return NextResponse.json(
@@ -120,13 +127,11 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    if (wishlist.user.toString() !== session.user.id) {
-      return NextResponse.json({ error: "Probhited" }, { status: 403 });
-    }
+    console.log("Removing roomId from wishlist:", roomId);
 
     await Wishlist.updateOne(
-      { user: session.user.id },
-      { $pull: { rooms: roomId } }
+      { user: user._id },
+      { $pull: { rooms: new mongoose.Types.ObjectId(roomId) } }
     );
 
     return NextResponse.json(
@@ -134,7 +139,11 @@ export async function PATCH(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating wishlist:", error);
+    console.error("🔥 Internal Error:", error);
+    if (error instanceof Error) {
+      console.error("🔥 Message:", error.message);
+      console.error("🔥 Stack:", error.stack);
+    }
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

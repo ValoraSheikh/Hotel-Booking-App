@@ -8,8 +8,10 @@ const handleRemove = async (id: number) => {
   console.log(`Remove item ${id}`);
 
   const roomData = {
-    roomId: id,
+    roomId: id.toString(),
   };
+
+  console.log('😎', roomData);
 
   const response = await fetch(`/api/wishlist`, {
     method: "PATCH",
@@ -17,12 +19,22 @@ const handleRemove = async (id: number) => {
     body: JSON.stringify(roomData),
   });
 
-  const data = await response.json();
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch (err) {
+    console.error("❌ Failed to parse JSON:", err);
+  }
 
   if (!response.ok) {
-    throw new Error(data.error || "Booking failed");
+    console.error("❌ Response not OK:", response.status, data);
+    throw new Error(data?.error || "Something went wrong");
   }
+
+  console.log("✅ Wishlist item removed:", data);
 };
+
 
 type props = {
   _id: number;
