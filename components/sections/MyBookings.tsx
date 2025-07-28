@@ -92,11 +92,8 @@ function BookingCard({
         body: JSON.stringify(data),
       });
 
-      console.log("🥱", response);
-      
       
       const result = await response.json();
-      console.log("🤬", result);
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to cancel booking");
