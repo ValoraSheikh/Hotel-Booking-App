@@ -108,7 +108,7 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
       const paymentData = {
         merchantOrderId: merchantOrderId,
         amount: totalPrice * 100,
-        redirectUrl: `http://localhost:3000/check-status?merchantOrderId=${merchantOrderId}&bookingId=${bookingId}`,
+        redirectUrl: `https://hotel-booking-app-woad.vercel.app/check-status?merchantOrderId=${merchantOrderId}&bookingId=${bookingId}`,
       };
 
       const payRes = await fetch("/api/payment/initiate", {
