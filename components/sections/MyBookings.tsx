@@ -83,13 +83,20 @@ function BookingCard({
         status: "cancelled",
       };
 
-      const response = await fetch(`/api/booking/${bookingId}`, {
+      console.log("😪", data);
+      
+
+      const response = await fetch(`/api/bookings`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
+      console.log("🥱", response);
+      
+      
       const result = await response.json();
+      console.log("🤬", result);
 
       if (!response.ok) {
         throw new Error(result.error || "Failed to cancel booking");
@@ -97,7 +104,6 @@ function BookingCard({
 
       console.log(`Booking ${bookingId} cancelled successfully`);
 
-      // Trigger the parent component's state update
       onCancel(bookingId);
     } catch (error) {
       console.error("Cancel booking error:", error);
