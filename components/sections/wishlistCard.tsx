@@ -43,7 +43,13 @@ type props = {
   location: string;
 };
 
-const WishlistCard = ({ item, removeCard }: { item: props }) => {
+const WishlistCard = ({
+  item,
+  removeCard,
+}: {
+  item: props;
+  removeCard: (id: number) => void;
+}) => {
   return (
     <>
       <Card
