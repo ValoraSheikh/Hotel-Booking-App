@@ -107,7 +107,6 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions);
-
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
@@ -115,30 +114,28 @@ export async function PATCH(request: NextRequest) {
   try {
     await dbConnect();
 
-    const user = await User.findOne({ email: session.user.email})
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     const { id, status } = await request.json();
-
     if (!id) {
       return NextResponse.json({ error: "Booking ID is required" }, { status: 400 });
     }
-
     if (status !== "cancelled") {
       return NextResponse.json({ error: "Invalid status update" }, { status: 400 });
     }
 
     const booking = await Booking.findById(id);
-
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    // Check if booking belongs to the logged-in user
-    if (booking.user.toString() !== user._id) {
+    if (booking.user.toString() !== user._id.toString()) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Prevent cancelling if already cancelled or completed
     if (booking.status === "cancelled" || booking.status === "completed") {
       return NextResponse.json(
         { error: `Booking already ${booking.status}` },
@@ -161,4 +158,5 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
 
