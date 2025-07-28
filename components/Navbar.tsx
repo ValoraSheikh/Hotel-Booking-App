@@ -110,6 +110,12 @@ export default function Header() {
             </li>
             <div className="bg-gray-200 w-full h-[1px]"></div>
             <li>
+              <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}>
+                Wishlist
+              </Link>
+            </li>
+            <div className="bg-gray-200 w-full h-[1px]"></div>
+            <li>
               <Link href="/about-us" onClick={() => setMobileMenuOpen(false)}>
                 About Us
               </Link>
@@ -227,7 +233,11 @@ export default function Header() {
                     <Link href="/rooms">Rooms</Link>
                   </li>
 
-                  <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-15 py-1">
+                  <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-14 py-1">
+                    <Link href="/wishlist">Wishlist</Link>
+                  </li>
+
+                  <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-16 py-1">
                     <Link href="/about-us">About Us</Link>
                   </li>
 

@@ -52,6 +52,30 @@ const amenities = {
   ],
 };
 
+const saveRoomToWishlist = async (id: string) => {
+  console.log(`I liked this room ${id}`);
+
+  const roomData = {
+    roomId: id
+  };
+
+  console.log('😪', roomData);
+
+  const response = await fetch("/api/wishlist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(roomData),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Booking failed");
+  }
+
+  console.log(data);
+};
+
 type PageProps = {
   params: Promise<{
     id: string;
@@ -172,7 +196,11 @@ export default function HotelRoomDetails(props: PageProps) {
                   ))}
                 </div>
                 <div className="absolute top-4 right-4 flex space-x-2">
-                  <button className="bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all">
+                  <button
+                  onClick={() => {
+                    saveRoomToWishlist(roomDetail._id);
+                  }}
+                  className="bg-white/80 rounded-full p-2 shadow-lg transition duration-300 hover:bg-pink-600 cursor-pointer ">
                     <Heart className="w-5 h-5" />
                   </button>
                   <button className="bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all">
