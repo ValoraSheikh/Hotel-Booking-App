@@ -1,9 +1,9 @@
 "use client";
 
 
+import Loading from "@/app/(app)/rooms/loading";
 import RoomCard from "@/components/sections/RoomCard";
 import useRooms from "@/hooks/useRooms";
-import Loading from "@/app/(app)/rooms/loading";
 
 const RoomsPage = () => {
   const { rooms, isLoading, error } = useRooms();
