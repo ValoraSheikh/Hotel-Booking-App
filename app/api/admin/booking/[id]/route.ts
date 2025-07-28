@@ -63,8 +63,6 @@ export async function PATCH(req: NextRequest, { params }: PageProps) {
     console.log("Body", body);
 
     const { id, status } = body;
-
-    console.log("In admin route", id , status);
     
 
     const validStatuses = ["booked", "cancelled", "completed"];

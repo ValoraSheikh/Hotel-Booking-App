@@ -108,12 +108,14 @@ export async function GET() {
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user?.id) {
+  if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
   try {
     await dbConnect();
+
+    const user = await User.findOne({ email: session.user.email})
 
     const { id, status } = await request.json();
 
@@ -132,7 +134,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Check if booking belongs to the logged-in user
-    if (booking.user.toString() !== session.user.id) {
+    if (booking.user.toString() !== user._id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
