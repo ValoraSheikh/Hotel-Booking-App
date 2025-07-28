@@ -1,7 +1,6 @@
 "use client";
 
-
-import Loading from "@/app/(app)/rooms/loading";
+import Loading from "@/app/(app)/rooms/Loading";
 import RoomCard from "@/components/sections/RoomCard";
 import useRooms from "@/hooks/useRooms";
 
