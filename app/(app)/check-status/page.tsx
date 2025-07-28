@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 type Status = "checking" | "success" | "failed" | "not-found";
 
-export default function CheckStatusPage() {
+function CheckStatusContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<Status>("checking");
 
   const merchantOrderId = searchParams.get("merchantOrderId");
   const bookingId = searchParams.get("bookingId");
-  
 
   useEffect(() => {
     if (!merchantOrderId || !bookingId) {
@@ -29,7 +28,7 @@ export default function CheckStatusPage() {
 
         if (!res.ok) throw new Error(data.error || "Unknown error");
 
-        const paymentStatus = data.paymentStatus; // assuming 'success' | 'failed' | 'pending'
+        const paymentStatus = data.paymentStatus;
 
         console.log("➡️ Returning status:", paymentStatus);
 
@@ -39,7 +38,7 @@ export default function CheckStatusPage() {
         } else if (paymentStatus === "failed") {
           setStatus("failed");
         } else {
-          setStatus("checking"); // still pending, maybe poll or refresh manually
+          setStatus("checking");
         }
       } catch (err) {
         console.error("Error checking status:", err);
@@ -80,5 +79,13 @@ export default function CheckStatusPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CheckStatusPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckStatusContent />
+    </Suspense>
   );
 }
