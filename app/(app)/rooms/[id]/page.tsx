@@ -23,7 +23,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import RoomDetailComponent from "@/components/sections/room-detail";
-// import { IRoom } from "@/models/Room.model";
 import useRoomDetail from "@/hooks/useRoomDetail";
 import Loading from "./Loading";
 
@@ -59,7 +58,6 @@ const saveRoomToWishlist = async (id: string) => {
     roomId: id
   };
 
-  console.log('😪', roomData);
 
   const response = await fetch("/api/wishlist", {
     method: "POST",
@@ -91,10 +89,6 @@ export default function HotelRoomDetails(props: PageProps) {
   const [checkOut, setCheckOut] = useState("2024-01-18");
   const [guests, setGuests] = useState(2);
   const { roomDetail, isLoading, error } = useRoomDetail(id);
-
-  if (!isLoading) {
-    console.log("In room detail", roomDetail);
-  }
 
   useEffect(() => {
     if (roomDetail) {

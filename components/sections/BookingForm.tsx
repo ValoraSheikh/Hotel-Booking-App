@@ -84,7 +84,7 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
       checkIn: checkIn.toISOString(),
       checkOut: checkOut.toISOString(),
       guests: parseInt(guests, 10),
-      totalPrice, // ensure this is calculated correctly
+      totalPrice,
     };
 
     console.log("Booking payload:", bookingData);
@@ -101,8 +101,6 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
       if (!response.ok) {
         throw new Error(data.error || "Booking failed");
       }
-
-      console.log("🎍", data.booking._id);
       const bookingId = data.booking._id;
 
       const merchantOrderId = Date.now();
@@ -125,6 +123,43 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
 
       const payData = await payRes.json();
       const { redirectUrl } = await payData;
+
+      // Here send email code
+
+      const emailData = {
+        user: {
+          name: session?.user?.name,
+          email: session.user.email,
+        },
+        phoneNo: parseInt(phoneNumber, 10),
+        room: roomId,
+        checkIn: checkIn.toISOString(),
+        checkOut: checkOut.toISOString(),
+        guests: parseInt(guests, 10),
+        totalPrice,
+      };
+
+      console.log("🤑", emailData);
+
+      const emailRes = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(emailData),
+      });
+
+      const emailDataRes = await emailRes.json();
+
+      if (!emailRes.ok) {
+        const errorMessage =
+          typeof emailDataRes === "string"
+            ? emailDataRes
+            : emailDataRes?.message ||
+              JSON.stringify(emailDataRes) ||
+              "Unknown error";
+
+        console.error("Booking POST error:", errorMessage);
+        setSubmitError(errorMessage);
+      }
 
       window.location.href = redirectUrl;
 
