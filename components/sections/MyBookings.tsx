@@ -83,7 +83,7 @@ function BookingCard({
         status: "cancelled",
       };
 
-      const response = await fetch(`/api/admin/booking/${bookingId}`, {
+      const response = await fetch(`/api/booking/${bookingId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
