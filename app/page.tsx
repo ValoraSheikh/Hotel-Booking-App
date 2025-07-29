@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   title: 'Hotel Booking App - Your Perfect Stay',
   description: 'Discover and book luxurious hotels for your next trip with our easy-to-use booking platform.',
   keywords: ['hotel booking', 'luxury hotels', 'travel', 'accommodation', 'vacation'],
-  viewport: 'width=device-width, initial-scale=1',
   openGraph: {
     title: 'Hotel Booking App - Your Perfect Stay',
     description: 'Discover and book luxurious hotels for your next trip with our easy-to-use booking platform.',
@@ -28,6 +27,11 @@ export const metadata: Metadata = {
     type: 'website',
   },
 };
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
 
 export default function Home() {
   return (

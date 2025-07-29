@@ -82,9 +82,8 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             image: user.image,
-            // password: undefined,
             provider: "google",
-            role: "user", // default role
+            role: "user",
           });
         }
       }
@@ -99,7 +98,7 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.id = dbUser._id;
           token.role = dbUser.role;
-          token.name = dbUser.name; // ✅ Get name from DB
+          token.name = dbUser.name;
         }
       }
 
@@ -107,7 +106,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.role = (user as any).role || token.role || "user";
-        token.name = user.name; // ✅ This is the missing line
+        token.name = user.name;
       }
 
       return token;
@@ -117,7 +116,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role;
-        session.user.name = token.name; // ✅ Add this
+        session.user.name = token.name;
       }
       return session;
     },
@@ -132,6 +131,19 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
+
+  cookies: {
+  sessionToken: {
+    name: `__Secure-next-auth.session-token`,
+    options: {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+    },
+  },
+},
+
 
   secret: process.env.NEXTAUTH_SECRET,
 };
