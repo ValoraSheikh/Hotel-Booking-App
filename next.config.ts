@@ -37,8 +37,6 @@ const securityHeaders = [
   },
 ];
 
-
-
 // ✅ FINAL EXPORT
 const nextConfig = {
   images: {
@@ -63,7 +61,7 @@ const nextConfig = {
       },
     ],
   },
-  
+
   async headers() {
     return [
       {
