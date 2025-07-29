@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 
+const isDev = process.env.NODE_ENV !== "production";
 
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
-    value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; img-src 'self' https: data:;",
+    value: isDev
+      ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * data: blob:; object-src 'none'; base-uri 'none';"
+      : "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; object-src 'none'; base-uri 'none';",
   },
   {
     key: "X-Frame-Options",
@@ -44,9 +46,13 @@ const nextConfig = {
       { protocol: "https", hostname: "**.ufs.sh" },
       { protocol: "https", hostname: "utfs.io" },
       { protocol: "https", hostname: "**.uploadthing.com" },
-      { protocol: "https", hostname: "uploadthing-prod.s3.us-west-2.amazonaws.com" },
+      {
+        protocol: "https",
+        hostname: "uploadthing-prod.s3.us-west-2.amazonaws.com",
+      },
     ],
   },
+  
   async headers() {
     return [
       {

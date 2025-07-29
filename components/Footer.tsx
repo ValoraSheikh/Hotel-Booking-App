@@ -84,6 +84,7 @@ export default function Footer() {
             </p>
             <form className="relative">
               <input
+              suppressHydrationWarning
                 type="text"
                 placeholder="Email"
                 className="w-full h-12 px-4 rounded bg-[#393D4A] text-[#707079] border-none placeholder:text-[#aaaab3]"

@@ -308,12 +308,9 @@ const RoomDetailComponent = ({ roomId }: RoomDetailProps) => {
               <div className="space-x-3">
                 <Button
                   onClick={() => signIn()}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className=" hover:bg-gray-700"
                 >
                   Log In
-                </Button>
-                <Button variant="outline" className="bg-transparent">
-                  Sign Up
                 </Button>
               </div>
             </div>

@@ -139,8 +139,6 @@ export default function BookingForm({ roomId, room }: BookingFormProps) {
         totalPrice,
       };
 
-      console.log("🤑", emailData);
-
       const emailRes = await fetch("/api/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -14,8 +14,10 @@ import {
   Twitter,
   X,
 } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import UserDropdown from "./sections/UserDropdown";
+import LogOutUserDropdown from "./sections/LogOutUserDropdown";
+import { Button } from "./ui/button";
 
 export default function Header() {
   const { data: session } = useSession();
@@ -86,12 +88,13 @@ export default function Header() {
               IN <i className="fa fa-angle-down ml-1"></i>
             </span>
           </div>
-          <a
-            href="#"
+          <Link
+            href="/rooms"
+            onClick={() => setMobileMenuOpen(false)}
             className="bk-btn inline-block px-6 py-4 text-xs uppercase bg-[#dfa974] text-white font-bold tracking-wider"
           >
             Booking Now
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Menu */}
@@ -158,13 +161,17 @@ export default function Header() {
           <li className="flex items-center gap-2">
             <Mails /> info.colorlib@gmail.com
           </li>
-          {session?.user && (
-            <button
+          {session?.user ? (
+            <Button
               onClick={() => signOut({ callbackUrl: "/sign-in" })}
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
             >
-              Logout
-            </button>
+              Log Out
+            </Button>
+          ) : (
+            <Button onClick={() => signIn()} className=" hover:bg-gray-700">
+              Log In
+            </Button>
           )}
         </ul>
       </div>
@@ -209,7 +216,7 @@ export default function Header() {
                 Booking Now
               </Link>
               <div className="language-option relative flex items-center gap-2 cursor-pointer">
-                {session?.user && <UserDropdown />}
+                {session?.user ? <UserDropdown /> : <LogOutUserDropdown />}
               </div>
             </div>
           </div>
@@ -241,11 +248,9 @@ export default function Header() {
                     <Link href="/about-us">About Us</Link>
                   </li>
 
-                  
-                    <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-15 py-1">
-                      <Link href="/bookings">Bookings</Link>
-                    </li>
-                  
+                  <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-15 py-1">
+                    <Link href="/bookings">Bookings</Link>
+                  </li>
 
                   <li className="relative after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[#dfa974] after:transition-all hover:after:w-8 py-1">
                     <Link href="/blogs">News</Link>

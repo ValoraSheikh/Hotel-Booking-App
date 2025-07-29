@@ -68,6 +68,7 @@ export default function SignInPage() {
           <div>
             <label className="font-medium">Email</label>
             <input
+            suppressHydrationWarning
               type="email"
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
