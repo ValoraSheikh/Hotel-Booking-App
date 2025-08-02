@@ -29,7 +29,7 @@ const page = () => {
               <div className="w-full flex-col justify-center items-start gap-8 flex">
                 <div className="w-full flex-col justify-start lg:items-start items-center gap-3 flex">
                   <h2 className="text-gray-900 text-4xl font-bold font-manrope leading-normal lg:text-start text-center">
-                    Best Hotel in Jaisalmer
+                    Best Hotel and Restaurant in Barmer
                   </h2>
                   <p className="text-gray-500 text-base font-normal leading-relaxed lg:text-start text-center">
                     Every project we&apos;ve undertaken has been a collaborative
@@ -41,7 +41,7 @@ const page = () => {
                 <div className="w-full lg:justify-start justify-center items-center sm:gap-10 gap-5 inline-flex">
                   <div className="flex-col justify-start items-start inline-flex">
                     <h3 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">
-                      33+
+                      20+
                     </h3>
                     <h6 className="text-gray-500 text-base font-normal leading-relaxed">
                       Years of Experience
@@ -57,7 +57,7 @@ const page = () => {
                   </div>
                   <div className="flex-col justify-start items-start inline-flex">
                     <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">
-                      52+
+                      5200+
                     </h4>
                     <h6 className="text-gray-500 text-base font-normal leading-relaxed">
                       Happy Clients

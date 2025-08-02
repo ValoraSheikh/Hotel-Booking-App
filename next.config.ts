@@ -59,6 +59,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "uploadthing-prod.s3.us-west-2.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 

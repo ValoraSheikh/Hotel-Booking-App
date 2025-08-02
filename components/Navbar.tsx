@@ -113,6 +113,12 @@ export default function Header() {
             </li>
             <div className="bg-gray-200 w-full h-[1px]"></div>
             <li>
+              <Link href="/bookings" onClick={() => setMobileMenuOpen(false)}>
+                Bookings
+              </Link>
+            </li>
+            <div className="bg-gray-200 w-full h-[1px]"></div>
+            <li>
               <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}>
                 Wishlist
               </Link>

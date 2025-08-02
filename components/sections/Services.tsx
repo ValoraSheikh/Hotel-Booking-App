@@ -2,7 +2,8 @@
 
 import React from "react";
 import "@/app/globals.css";
-import { BedDouble, Beer, CarTaxiFront, MapPlus, Salad, WashingMachine } from "lucide-react";
+import { CalendarDays, CarTaxiFront, MapPlus, UtensilsCrossed, } from "lucide-react";
+import { IconBrandCraft, IconWaterpolo } from "@tabler/icons-react";
 
 export default function Services() {
   return (
@@ -22,11 +23,11 @@ export default function Services() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
   {[
     { icon: <MapPlus size={48} />, title: "Travel Plan" },
-    { icon: <Salad size={48} />, title: "Catering Service" },
-    { icon: <BedDouble size={48} />, title: "Babysitting" },
-    { icon: <WashingMachine size={48} />, title: "Laundry" },
+    { icon: <UtensilsCrossed size={48} />, title: "Authentic Cuisines" },
+    { icon: <IconWaterpolo stroke={2}  size={48} />, title: "Water Park" },
+    { icon: <IconBrandCraft size={48} />, title: "Handi Craft Items" },
     { icon: <CarTaxiFront size={48} />, title: "Hire Driver" },
-    { icon: <Beer size={48} />, title: "Bar & Drink" },
+    { icon: <CalendarDays size={48} />, title: "Event Hosting & Catering" },
   ].map((item, i) => (
     <div
       key={i}

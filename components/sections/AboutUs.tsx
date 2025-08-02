@@ -26,21 +26,17 @@ export default function AboutUs() {
                   About Us
                 </span>
                 <h2 className="text-5xl font-playfair font-bold leading-snug text-gray-800 text-center playfair-display max-sm:text-4xl">
-                  Intercontinental LA <br />
-                  Westlake Hotel
+                  The Good Hall <br />
+                  Best Resort in Barmer
                 </h2>
               </div>
               {/* f-para */}
               <p className="text-gray-600 font-medium leading-relaxed text-center">
-                Sona.com is a leading online accommodation site. We’re
-                passionate about travel. Every day, we inspire and reach
-                millions of travelers across 90 local websites in 41 languages.
+                Nestled in the heart of Barmer, The Goodhall restaurant offers a unique and immersive experience that celebrates the rich heritage of Rajasthan. Guests can dine in authentically designed Rajasthani cultural rooms and huts, savoring traditional cuisines that tantalize the taste buds.
               </p>
               {/* s-para */}
               <p className="text-gray-700 font-medium leading-relaxed text-center">
-                So when it comes to booking the perfect hotel, vacation rental,
-                resort, apartment, guest house, or tree house, we’ve got you
-                covered.
+                Beyond the culinary delights, The Goodhall also boasts an exciting waterpark, providing a perfect blend of cultural immersion and family-friendly fun.
               </p>
               <div className="flex justify-center mt-6">
                 <a
@@ -61,7 +57,7 @@ export default function AboutUs() {
               {/* about-pic → row + col-sm-6 */}
               <div>
                 <Image
-                  src="/img/about/about-1.jpg"
+                  src="https://res.cloudinary.com/dxlh1tom2/image/upload/v1754111691/ChatGPT_Image_Aug_2_2025_10_43_15_AM_e6wgp8.png"
                   alt="About Image 1"
                   width={600}
                   height={400}
@@ -70,7 +66,7 @@ export default function AboutUs() {
               </div>
               <div>
                 <Image
-                  src="/img/about/about-2.jpg"
+                  src="https://res.cloudinary.com/dxlh1tom2/image/upload/v1754111859/ChatGPT_Image_Aug_2_2025_10_47_01_AM_xubmzl.png"
                   alt="About Image 2"
                   width={600}
                   height={400}

@@ -42,9 +42,9 @@ export default function Hero() {
   };
 
   const images = [
-    "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1517840901100-8179e982acb7?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://res.cloudinary.com/dxlh1tom2/image/upload/v1754115607/ChatGPT_Image_Aug_2_2025_11_49_25_AM_xigfoq.png",
+    "https://res.cloudinary.com/dxlh1tom2/image/upload/v1754109977/ChatGPT_Image_Aug_2_2025_10_05_23_AM_v2jvlj.png",
+    "https://res.cloudinary.com/dxlh1tom2/image/upload/v1754109968/ChatGPT_Image_Aug_2_2025_10_13_03_AM_fz0ewj.png",
   ];
 
   useEffect(() => {
@@ -63,8 +63,8 @@ export default function Hero() {
           <Image
             key={index}
             src={img}
-            placeholder="blur"
-            blurDataURL="..."
+            // placeholder="blur"
+            // blurDataURL="..."
             alt={`Hero ${index}`}
             fill
             className={`object-cover transition-opacity duration-1000 ease-in-out absolute inset-0 ${
@@ -84,7 +84,7 @@ export default function Hero() {
                 style={{ fontSize: "5.5rem" }}
                 className="text-7xl font-bold playfair-display"
               >
-                Sona A Luxury Hotel
+                The Good Hall
               </h1>
               <p className="text-lg text-white/90 max-w font-semibold">
                 Here are the best hotel booking sites, including recommendations

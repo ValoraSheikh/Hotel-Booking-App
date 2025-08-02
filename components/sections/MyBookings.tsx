@@ -130,7 +130,7 @@ function BookingCard({
               </div>
               <Badge
                 variant="outline"
-                className={statusConfig[booking.status].color}
+                className={`${statusConfig[booking.status].color} mt-10`}
               >
                 {statusConfig[booking.status].label}
               </Badge>
